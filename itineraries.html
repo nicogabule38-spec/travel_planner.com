@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itineraries - A Journey 4 Life</title>
+    <link rel="stylesheet" href="css/hover-animations.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .page-title {
+            text-align: center;
+            font-size: 3rem;
+            margin: 40px 0;
+            color: #333;
+        }
+        
+        .create-itinerary {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .create-itinerary h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .create-itinerary p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        /* Dark mode */
+        body.dark { background:#111; color:#ddd; }
+        body.dark header { background:#141414; }
+        body.dark nav a { color:#ddd; }
+        body.dark .itinerary-card, body.dark .create-itinerary, body.dark .main-content, body.dark .widget { background:#222; }
+        body.dark .itinerary-header { background: linear-gradient(45deg, #3947c4, #513e79); }
+        
+        .itineraries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .itinerary-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .itinerary-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .itinerary-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+        }
+        
+        .itinerary-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .itinerary-duration {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .itinerary-content {
+            padding: 25px;
+        }
+        
+        .itinerary-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .itinerary-destinations {
+            margin-bottom: 20px;
+        }
+        
+        .itinerary-destinations h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .destination-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .destination-tag {
+            background: #f0f0f0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .itinerary-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .itinerary-stats {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .itinerary-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .itinerary-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .itineraries-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .itinerary-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+                    <img src="images/Journey.png" alt="A Journey 4 Life" style="height:60px; width:auto;"/>
+                    <span>A Journey 4 Life</span>
+                </a>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="destinations.html">Destinations</a></li>
+                        <li><a href="itineraries.html">Itineraries</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li id="authNav">
+                            <a href="login.html" id="loginLink">Login</a>
+                            <a href="register.html" id="registerLink">Register</a>
+                            <span id="userInfo" style="display: none;">
+                                <span id="userName"></span> | 
+                                <a href="dashboard.html">Dashboard</a> | 
+                                <a href="#" onclick="logout()">Logout</a>
+                            </span>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1 class="page-title">Travel Itineraries</h1>
+            
+            <div class="create-itinerary">
+                <h2>Create Your Perfect Itinerary</h2>
+                <p>Plan your dream trip with our easy-to-use itinerary builder</p>
+                <a href="#" class="btn" onclick="createItinerary()">Start Planning</a>
+            </div>
+            
+            <div class="itineraries-grid" id="itinerariesGrid">
+                <!-- User itineraries will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function createItinerary() {
+            // Check if user is logged in
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('Please login to create itineraries!');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Show itinerary creation modal
+            showItineraryModal();
+        }
+        
+        function showItineraryModal() {
+            const modal = document.createElement('div');
+            modal.id = 'itineraryModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto;">
+                    <h2 style="margin-bottom: 20px; color: #333;">Create New Itinerary</h2>
+                    
+                    <form id="itineraryForm">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Itinerary Title</label>
+                            <input type="text" id="itineraryTitle" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Description</label>
+                            <textarea id="itineraryDescription" rows="3" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;"></textarea>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Duration</label>
+                            <select id="itineraryDuration" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                                <option value="">Select Duration</option>
+                                <option value="1|0">1 Day, 0 Night</option>
+                                <option value="2|1">2 Days, 1 Night</option>
+                                <option value="3|2">3 Days, 2 Nights</option>
+                                <option value="5|4">5 Days, 4 Nights</option>
+                                <option value="7|6">7 Days, 6 Nights</option>
+                                <option value="10|9">10 Days, 9 Nights</option>
+                                <option value="14|13">14 Days, 13 Nights</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 20px; display:flex; gap:12px;">
+                            <div style="flex:1;">
+                                <label style="display:block;margin-bottom:5px;font-weight:500;">Start Date</label>
+                                <input type="date" id="itineraryStartDate" required style="width:100%; padding:10px; border:2px solid #ddd; border-radius:5px;">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="display:block;margin-bottom:5px;font-weight:500;">End Date</label>
+                                <input type="date" id="itineraryEndDate" required style="width:100%; padding:10px; border:2px solid #ddd; border-radius:5px;">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Budget (PHP)</label>
+                            <input type="number" id="itineraryBudget" min="0" placeholder="Enter total budget" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                            <small id="budgetHelper" style="display:block; color:#666; margin-top:6px;">Estimated per-day cost used: ₱2,000</small>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 500;">Select Destinations</label>
+                            <div class="search-bar" style="position:relative; margin-bottom:10px;">
+                                <input type="text" placeholder="Search destinations..." id="destSearchInput" autocomplete="off" style="width:100%; padding:10px 14px; border:2px solid #ddd; border-radius:8px;">
+                                <ul id="destSearchSuggestions" style="position:absolute; top:44px; left:0; right:0; background:#fff; border:1px solid #ddd; border-top:none; border-radius:0 0 8px 8px; list-style:none; max-height:220px; overflow-y:auto; display:none; z-index:5;"></ul>
+                            </div>
+                            <div id="destinationsList" style="max-height: 220px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;"></div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button type="button" onclick="closeItineraryModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+                            <button type="submit" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Create Itinerary</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Handle form submission
+            document.getElementById('itineraryForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitItinerary();
+            });
+        }
+        
+        function closeItineraryModal() {
+            const modal = document.getElementById('itineraryModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function submitItinerary() {
+            const title = document.getElementById('itineraryTitle').value;
+            const description = document.getElementById('itineraryDescription').value;
+            const duration = document.getElementById('itineraryDuration').value;
+            const budget = document.getElementById('itineraryBudget').value;
+            const startDate = document.getElementById('itineraryStartDate').value;
+            const endDate = document.getElementById('itineraryEndDate').value;
+            
+            // Get selected destinations
+            const selectedDestinations = [];
+            const checkboxes = document.querySelectorAll('#destinationsList input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                selectedDestinations.push(checkbox.value);
+            });
+            
+            if (selectedDestinations.length === 0) {
+                alert('Please select at least one destination!');
+                return;
+            }
+
+            // Validate dates
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates.');
+                return;
+            }
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date cannot be after end date.');
+                return;
+            }
+            
+            // Create itinerary object
+            const user = JSON.parse(localStorage.getItem('user'));
+            const itinerary = {
+                id: Date.now(),
+                userId: user.id,
+                title: title,
+                description: description,
+                duration: duration,
+                startDate: new Date(startDate).toISOString(),
+                endDate: new Date(endDate).toISOString(),
+                budget: budget,
+                destinations: selectedDestinations,
+                createdAt: new Date().toISOString(),
+                status: 'pending'
+            };
+            
+            // Save to localStorage (persist per user)
+            const savedItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            savedItineraries.push(itinerary);
+            localStorage.setItem('savedItineraries', JSON.stringify(savedItineraries));
+
+                // Also save each destination to user's saved destinations (if not already saved)
+                let savedDestinations = JSON.parse(localStorage.getItem('savedDestinations') || '[]');
+                itinerary.destinations.forEach(destName => {
+                    // Check if already saved for this user
+                    const alreadySaved = savedDestinations.some(d => d.name === destName && d.userId === user.id);
+                    if (!alreadySaved) {
+                        // Get destination data (simulate same as destinations.html)
+                        // This assumes getDestinationData is available globally or in this file
+                        let destinationData;
+                        if (typeof getDestinationData === 'function') {
+                            destinationData = getDestinationData(destName);
+                        } else {
+                            // Fallback: minimal data
+                            destinationData = { name: destName, description: '', location: '', image: '', rating: '', icon: '📍' };
+                        }
+                        const newDestination = {
+                            id: Date.now(),
+                            name: destinationData.name,
+                            description: destinationData.description,
+                            location: destinationData.location,
+                            image: destinationData.image,
+                            rating: destinationData.rating,
+                            icon: '📍',
+                            savedAt: new Date().toISOString(),
+                            userId: user.id
+                        };
+                        savedDestinations.push(newDestination);
+                    }
+                });
+                localStorage.setItem('savedDestinations', JSON.stringify(savedDestinations));
+            // Close modal
+            closeItineraryModal();
+
+            // Show success message and redirect to dashboard where saved itineraries are shown
+            alert(`Itinerary "${title}" has been created successfully!\n\n`);
+            window.location.href = 'dashboard.html';
+        }
+        
+        // Add click handlers to itinerary cards
+        document.querySelectorAll('.itinerary-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('.itinerary-title').textContent;
+                alert(`You clicked on "${title}"! This would open the detailed itinerary view.`);
+            });
+        });
+        
+        // Check authentication status
+        function checkAuthStatus() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const loginLink = document.getElementById('loginLink');
+            const registerLink = document.getElementById('registerLink');
+            const userInfo = document.getElementById('userInfo');
+            const userName = document.getElementById('userName');
+            
+            if (user) {
+                loginLink.style.display = 'none';
+                registerLink.style.display = 'none';
+                userInfo.style.display = 'inline';
+                userName.textContent = user.name;
+            } else {
+                loginLink.style.display = 'inline';
+                registerLink.style.display = 'inline';
+                userInfo.style.display = 'none';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                checkAuthStatus();
+                window.location.reload();
+            }
+        }
+        
+        // Save itinerary function
+        function saveItinerary(itineraryName, itineraryDescription, itineraryDuration) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('Please login to save itineraries!');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const savedItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const existingItinerary = savedItineraries.find(itin => itin.name === itineraryName);
+            
+            if (existingItinerary) {
+                alert('This itinerary is already saved!');
+                return;
+            }
+            
+            savedItineraries.push({
+                name: itineraryName,
+                description: itineraryDescription,
+                duration: itineraryDuration,
+                savedAt: new Date().toISOString()
+            });
+            
+            localStorage.setItem('savedItineraries', JSON.stringify(savedItineraries));
+            alert(`${itineraryName} has been saved to your dashboard!`);
+        }
+        
+        // Add save functionality
+        document.querySelectorAll('.btn-outline').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card click
+                
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user) {
+                    alert('Please login to save itineraries!');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const card = this.closest('.itinerary-card');
+                const title = card.querySelector('.itinerary-title').textContent;
+                const description = card.querySelector('.itinerary-description').textContent;
+                const duration = card.querySelector('.itinerary-duration').textContent;
+                
+                saveItinerary(title, description, duration);
+                
+                this.textContent = 'Saved!';
+                this.style.background = '#28a745';
+                this.style.borderColor = '#28a745';
+                this.style.color = 'white';
+            });
+        });
+        
+        // Load user itineraries
+        function loadUserItineraries() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const itinerariesGrid = document.getElementById('itinerariesGrid');
+            
+            if (!user) {
+                itinerariesGrid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">📅</div>
+                        <p>Please login to view your itineraries!</p>
+                        <a href="login.html" class="btn" style="margin-top: 20px;">Login</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            const savedItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const userItineraries = savedItineraries.filter(itinerary => itinerary.userId === user.id);
+            
+            if (userItineraries.length === 0) {
+                itinerariesGrid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">📅</div>
+                        <p>No itineraries created yet. Start planning your first trip!</p>
+                        <button onclick="createItinerary()" class="btn" style="margin-top: 20px;">Create Itinerary</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            itinerariesGrid.innerHTML = '';
+            userItineraries.forEach(itinerary => {
+                const itineraryCard = document.createElement('div');
+                itineraryCard.className = 'itinerary-card';
+                itineraryCard.innerHTML = `
+                    <div class="itinerary-header">
+                        <div class="itinerary-title">${itinerary.title}</div>
+                        <div class="itinerary-duration">${itinerary.duration}</div>
+                    </div>
+                    <div class="itinerary-content">
+                        <p class="itinerary-description">${itinerary.description}</p>
+                        
+                        <div class="itinerary-destinations">
+                            <h4>Destinations:</h4>
+                            <div class="destination-list">
+                                ${itinerary.destinations.map(dest => `<span class="destination-tag">${dest}</span>`).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="itinerary-meta">
+                            <div class="itinerary-stats">
+                                <span>💰 ${itinerary.budget}</span>
+                                <span>📅 ${itinerary.startDate ? new Date(itinerary.startDate).toLocaleDateString() + ' — ' + new Date(itinerary.endDate).toLocaleDateString() : new Date(itinerary.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            
+                        
+                        
+                        <div class="itinerary-actions">
+                            <button onclick="viewItineraryDetails(${itinerary.id})" class="btn btn-small">View Details</button>
+                            <button onclick="editItinerary(${itinerary.id})" class="btn btn-small btn-outline">Edit</button>
+                            <button onclick="deleteItinerary(${itinerary.id})" class="btn btn-small" style="background: #e74c3c;">Delete</button>
+                        </div>
+                    </div>
+                `;
+                itinerariesGrid.appendChild(itineraryCard);
+            });
+        }
+        
+        function viewItineraryDetails(itineraryId) {
+            const savedItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const itinerary = savedItineraries.find(itin => itin.id === itineraryId);
+            
+            if (!itinerary) {
+                alert('Itinerary not found!');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'itineraryDetailsModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">${itinerary.title}</h2>
+                        <button onclick="closeItineraryDetailsModal()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Duration</h3>
+                        <p style="color: #666;">${itinerary.duration}</p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Dates</h3>
+                        <p style="color: #666;">${itinerary.startDate ? new Date(itinerary.startDate).toLocaleDateString() + ' — ' + new Date(itinerary.endDate).toLocaleDateString() : 'N/A'}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Budget</h3>
+                        <p style="color: #666;">${itinerary.budget}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Description</h3>
+                        <p style="color: #666; line-height: 1.6;">${itinerary.description}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Destinations</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            ${itinerary.destinations.map(dest => `<span style="background: #f0f0f0; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; color: #666;">${dest}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Status</h3>
+                        <p style="color: #666;">${itinerary.status === 'pending' ? '⏳ Pending Admin Approval' : '✅ Approved'}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Created</h3>
+                        <p style="color: #666;">${new Date(itinerary.createdAt).toLocaleString()}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function closeItineraryDetailsModal() {
+            const modal = document.getElementById('itineraryDetailsModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function editItinerary(itineraryId) {
+            const savedItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const itinerary = savedItineraries.find(itin => itin.id === itineraryId);
+            
+            if (!itinerary) {
+                alert('Itinerary not found!');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'editItineraryModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            // Split the duration value to get days and nights
+            const [days, nights] = itinerary.duration.split('|');
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto;">
+                    <h2 style="margin-bottom: 20px; color: #333;">Edit Itinerary</h2>
+                    
+                    <form id="editItineraryForm">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Itinerary Title</label>
+                            <input type="text" id="editTitle" required value="${itinerary.title}" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Description</label>
+                            <textarea id="editDescription" rows="3" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">${itinerary.description}</textarea>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Duration</label>
+                            <select id="editDuration" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                                <option value="1|0">1 Day, 0 Night</option>
+                                <option value="2|1">2 Days, 1 Night</option>
+                                <option value="3|2">3 Days, 2 Nights</option>
+                                <option value="5|4">5 Days, 4 Nights</option>
+                                <option value="7|6">7 Days, 6 Nights</option>
+                                <option value="10|9">10 Days, 9 Nights</option>
+                                <option value="14|13">14 Days, 13 Nights</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Budget (PHP)</label>
+                            <input type="number" id="editBudget" min="0" value="${itinerary.budget}" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+
+                        <div style="margin-bottom: 20px; display:flex; gap:12px;">
+                            <div style="flex:1;">
+                                <label style="display:block;margin-bottom:5px;font-weight:500;">Start Date</label>
+                                <input type="date" id="editStartDate" required style="width:100%; padding:10px; border:2px solid #ddd; border-radius:5px;">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="display:block;margin-bottom:5px;font-weight:500;">End Date</label>
+                                <input type="date" id="editEndDate" required style="width:100%; padding:10px; border:2px solid #ddd; border-radius:5px;">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 500;">Select Destinations</label>
+                            <div class="search-bar" style="position:relative; margin-bottom:10px;">
+                                <input type="text" placeholder="Search destinations..." id="editDestSearchInput" autocomplete="off" style="width:100%; padding:10px 14px; border:2px solid #ddd; border-radius:8px;">
+                                <ul id="editDestSearchSuggestions" style="position:absolute; top:44px; left:0; right:0; background:#fff; border:1px solid #ddd; border-top:none; border-radius:0 0 8px 8px; list-style:none; max-height:220px; overflow-y:auto; display:none; z-index:5;"></ul>
+                            </div>
+                            <div id="editDestinationsList" style="max-height: 220px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;"></div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button type="button" onclick="closeEditModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+                            <button type="submit" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Set the current duration
+            document.getElementById('editDuration').value = itinerary.duration;
+            // Prefill dates if available
+            try {
+                if (itinerary.startDate) document.getElementById('editStartDate').value = new Date(itinerary.startDate).toISOString().slice(0,10);
+                if (itinerary.endDate) document.getElementById('editEndDate').value = new Date(itinerary.endDate).toISOString().slice(0,10);
+            } catch (e) { /* ignore */ }
+            
+            // Render destinations with current selections
+            function renderEditDestinationChecklist(filterTerm = '') {
+                const list = document.getElementById('editDestinationsList');
+                if (!list) return;
+                const q = (filterTerm || '').toLowerCase();
+                const items = KNOWN_DESTINATIONS.filter(n => n.toLowerCase().includes(q));
+                list.innerHTML = items.map(n => `
+                    <label style="display:block; margin-bottom:8px;">
+                        <input type="checkbox" value="${n}" ${itinerary.destinations.includes(n) ? 'checked' : ''}> ${n}
+                    </label>
+                `).join('');
+            }
+            
+            // Setup destination search functionality
+            setTimeout(() => {
+                renderEditDestinationChecklist();
+                const input = document.getElementById('editDestSearchInput');
+                const sugg = document.getElementById('editDestSearchSuggestions');
+                if (!input || !sugg) return;
+                
+                function renderEditSuggestions(term) {
+                    const q = term.trim().toLowerCase();
+                    if (!q) { sugg.style.display = 'none'; sugg.innerHTML = ''; return; }
+                    const items = KNOWN_DESTINATIONS.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
+                    if (!items.length) { sugg.style.display = 'none'; sugg.innerHTML = ''; return; }
+                    sugg.innerHTML = items.map(n => `<li style="padding:10px 14px; cursor:pointer;">${n}</li>`).join('');
+                    sugg.style.display = 'block';
+                }
+                
+                input.addEventListener('input', function() {
+                    renderEditDestinationChecklist(this.value);
+                    renderEditSuggestions(this.value);
+                });
+                
+                sugg.addEventListener('click', function(e) {
+                    const li = e.target.closest('li');
+                    if (!li) return;
+                    input.value = li.textContent;
+                    renderEditDestinationChecklist(li.textContent);
+                    sugg.style.display = 'none';
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.search-bar')) sugg.style.display = 'none';
+                });
+                
+                // Duration <-> Budget linkage for edit form
+                const durationEl = document.getElementById('editDuration');
+                const budgetEl = document.getElementById('editBudget');
+                const PER_DAY = 2000; // base estimate
+                
+                function parseDuration(val) {
+                    if (!val) return 0;
+                    const [days] = val.split('|').map(Number);
+                    return isNaN(days) ? 0 : days;
+                }
+                
+                function updateEditBudgetFromDuration() {
+                    const days = parseDuration(durationEl.value);
+                    if (!days) return;
+                    const est = days * PER_DAY;
+                    budgetEl.value = est;
+                }
+                
+                function updateEditDurationFromBudget() {
+                    const budget = parseInt(budgetEl.value || '0', 10);
+                    if (!budget) return;
+                    const days = Math.max(1, Math.floor(budget / PER_DAY));
+                    // try to select the closest option by days
+                    let best = null;
+                    let bestDiff = Infinity;
+                    Array.from(durationEl.options).forEach(opt => {
+                        const d = parseDuration(opt.value);
+                        if (d) {
+                            const diff = Math.abs(d - days);
+                            if (diff < bestDiff) {
+                                bestDiff = diff;
+                                best = opt.value;
+                            }
+                        }
+                    });
+                    if (best) durationEl.value = best;
+                }
+                
+                durationEl.addEventListener('change', updateEditBudgetFromDuration);
+                budgetEl.addEventListener('input', updateEditDurationFromBudget);
+
+                // Wire start/end date inputs in edit form
+                const editStart = document.getElementById('editStartDate');
+                const editEnd = document.getElementById('editEndDate');
+                const MS_PER_DAY = 24 * 60 * 60 * 1000;
+                function calcDaysEdit(s,e){ try { const sd=new Date(s); const ed=new Date(e); if (isNaN(sd)||isNaN(ed)) return 0; return Math.max(1, Math.floor((ed-sd)/MS_PER_DAY)+1); } catch { return 0; } }
+                function setEditDurationClosest(days){ if(!days) return; let best=null,bestDiff=Infinity; Array.from(durationEl.options).forEach(opt=>{ const d=parseDuration(opt.value); if(d){ const diff=Math.abs(d-days); if(diff<bestDiff){bestDiff=diff;best=opt.value;} } }); if(best) durationEl.value=best; }
+
+                function updateEditDurationBudgetFromDates(){ if(!editStart||!editEnd) return; const s=editStart.value,e=editEnd.value; if(!s||!e) return; if(new Date(s)>new Date(e)) editEnd.value=s; const days=calcDaysEdit(s,e); if(days){ setEditDurationClosest(days); const est=days*PER_DAY; budgetEl.value=est; } }
+                function updateEditEndFromDuration(){ if(!editStart) return; const s=editStart.value; if(!s) return; const days=parseDuration(durationEl.value); if(!days) return; const sd=new Date(s); const newEnd=new Date(sd.getTime() + (days-1)*MS_PER_DAY); editEnd.value=newEnd.toISOString().slice(0,10); }
+
+                if (editStart && editEnd) {
+                    editStart.addEventListener('change', function(){ if (editEnd.value && new Date(editStart.value) > new Date(editEnd.value)) editEnd.value = editStart.value; updateEditDurationBudgetFromDates(); });
+                    editEnd.addEventListener('change', updateEditDurationBudgetFromDates);
+                }
+                durationEl.addEventListener('change', function(){ updateEditBudgetFromDuration(); updateEditEndFromDuration(); });
+                budgetEl.addEventListener('input', function(){ updateEditDurationFromBudget(); updateEditEndFromDuration(); });
+
+                // initialize edit dates <-> duration/budget
+                if (editStart && editEnd && editStart.value && editEnd.value) updateEditDurationBudgetFromDates();
+            }, 0);
+            
+            // Handle form submission
+            document.getElementById('editItineraryForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const title = document.getElementById('editTitle').value;
+                const description = document.getElementById('editDescription').value;
+                const duration = document.getElementById('editDuration').value;
+                const budget = document.getElementById('editBudget').value;
+                
+                // Get selected destinations
+                const selectedDestinations = [];
+                const checkboxes = document.querySelectorAll('#editDestinationsList input[type="checkbox"]:checked');
+                checkboxes.forEach(checkbox => {
+                    selectedDestinations.push(checkbox.value);
+                });
+                
+                if (selectedDestinations.length === 0) {
+                    alert('Please select at least one destination!');
+                    return;
+                }
+
+                // Validate dates in edit form
+                const startDate = document.getElementById('editStartDate').value;
+                const endDate = document.getElementById('editEndDate').value;
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates.');
+                    return;
+                }
+                if (new Date(startDate) > new Date(endDate)) {
+                    alert('Start date cannot be after end date.');
+                    return;
+                }
+                
+                // Update itinerary
+                const savedItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+                const itineraryIndex = savedItineraries.findIndex(itin => itin.id === itineraryId);
+                
+                if (itineraryIndex !== -1) {
+                    savedItineraries[itineraryIndex] = {
+                        ...savedItineraries[itineraryIndex],
+                        title,
+                        description,
+                        duration,
+                            budget,
+                            startDate: new Date(startDate).toISOString(),
+                            endDate: new Date(endDate).toISOString(),
+                        destinations: selectedDestinations,
+                        status: 'pending', // Reset to pending after edit
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('savedItineraries', JSON.stringify(savedItineraries));
+                    
+                    // Close modal and reload itineraries
+                    closeEditModal();
+                    loadUserItineraries();
+                    alert('Itinerary updated successfully!\n\n');
+                }
+            });
+        }
+        
+        function closeEditModal() {
+            const modal = document.getElementById('editItineraryModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function deleteItinerary(itineraryId) {
+            if (confirm('Are you sure you want to delete this itinerary?')) {
+                const savedItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+                const updatedItineraries = savedItineraries.filter(itin => itin.id !== itineraryId);
+                localStorage.setItem('savedItineraries', JSON.stringify(updatedItineraries));
+                loadUserItineraries();
+                alert('Itinerary deleted successfully!');
+            }
+        }
+        
+        // Check authentication status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+            loadUserItineraries();
+            // dark mode init
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') document.body.classList.add('dark');
+        });
+
+        // ========== Destination search + suggestions for itinerary modal ==========
+        const KNOWN_DESTINATIONS = [
+            // Landmarks
+            'Hundred Islands', 'Davao Crocodile Park', 'Caleruega Church', 'Sunken Cemetery',
+            "Magellan's Cross", 'Pagudpud', 'San Agustin Church', 'Paoay Church', 'Malacañang Palace',
+            'Baguio Cathedral', 'Callao Cave', 'Maligcong Rice Terraces', 'Cagsawa Ruins',
+            'Potipot Island', 'Barasoain Church', 'Mt. Samat National Shrine', 'Biak-na-Bato National Park',
+            'Cape Bojeador Lighthouse', 'Taal Volcano',
+
+            // Famous Spots
+            'Boracay Island', 'Chocolate Hills', 'Pagsanjan Falls', 'Caramoan Islands',
+            'Baler Bay', 'Intramuros', 'Vigan', 'Siargao Island', 'Batanes', 'Cebu',
+            'Davao', 'Baguio', 'La Union',
+
+            // Restaurants in Luzon
+            'Abe Restaurant', "Razon's of Guagua", 'Bale Dutung', 'Isdaan Floating Restaurant',
+            'Bag of Beans', 'The Dining Room at Bale Capampangan', 'Calle Brewery', 'Kusina Felicitas',
+            'Cafe Adriatico', 'BenCab Cafe', "Everybody's Cafe", 'Small Talk Café',
+            "C's by L'Fisher", 'Cafe Lago', 'Kamayan sa Palaisdaan', 'Cafe Ilang-Ilang',
+            'Hill Station', "Matutina's Seafood Restaurant", "Leslie's Ridge and Restaurant",
+            '18th Street Pala-Pala', 'Balay Dako', "Antonio's Restaurant", "The Farmer's Daughter",
+            'Cafe by the Ruins', 'Cafe Juanita',
+
+            // Restaurants in Visayas
+            'Abacá Restaurant', "Café Bob's", 'Sans Rival Bistro', 'Casa Verde',
+            'Pinya Restaurant', 'Coco Vida', 'Nonki', 'Sofia', 'Marrison',
+            'Larsian Sa Fuente', 'Carcar Public Market', '21 Restaurant',
+            "Tatoy's Manokan"
+        ];
+
+        function renderDestinationChecklist(filterTerm = '') {
+            const list = document.getElementById('destinationsList');
+            if (!list) return;
+            const q = (filterTerm||'').toLowerCase();
+            const items = KNOWN_DESTINATIONS.filter(n => n.toLowerCase().includes(q));
+            list.innerHTML = items.map(n => `
+                <label style="display:block; margin-bottom:8px;">
+                    <input type="checkbox" value="${n}"> ${n}
+                </label>
+            `).join('');
+        }
+
+        // Attach after modal is created
+        const originalShowItineraryModal = showItineraryModal;
+        showItineraryModal = function() {
+            originalShowItineraryModal();
+            // Defer to allow DOM build
+            setTimeout(() => {
+                renderDestinationChecklist();
+                const input = document.getElementById('destSearchInput');
+                const sugg = document.getElementById('destSearchSuggestions');
+                if (!input || !sugg) return;
+
+                function renderSug(term) {
+                    const q = term.trim().toLowerCase();
+                    if (!q) { sugg.style.display = 'none'; sugg.innerHTML=''; return; }
+                    const items = KNOWN_DESTINATIONS.filter(n => n.toLowerCase().includes(q)).slice(0,8);
+                    if (!items.length) { sugg.style.display = 'none'; sugg.innerHTML=''; return; }
+                    sugg.innerHTML = items.map(n => `<li style="padding:10px 14px; cursor:pointer;">${n}</li>`).join('');
+                    sugg.style.display = 'block';
+                }
+
+                input.addEventListener('input', function(){
+                    renderDestinationChecklist(this.value);
+                    renderSug(this.value);
+                });
+                sugg.addEventListener('click', function(e){
+                    const li = e.target.closest('li');
+                    if (!li) return;
+                    input.value = li.textContent;
+                    renderDestinationChecklist(li.textContent);
+                    sugg.style.display = 'none';
+                });
+                document.addEventListener('click', function(e){
+                    if (!e.target.closest('.search-bar')) sugg.style.display = 'none';
+                });
+
+                // Duration <-> Budget linkage
+                const durationEl = document.getElementById('itineraryDuration');
+                const budgetEl = document.getElementById('itineraryBudget');
+                const helper = document.getElementById('budgetHelper');
+                const PER_DAY = 2000; // base estimate
+
+                function parseDuration(val){
+                    if (!val) return 0;
+                    const [days] = val.split('|').map(Number);
+                    return isNaN(days) ? 0 : days;
+                }
+                function updateBudgetFromDuration(){
+                    const days = parseDuration(durationEl.value);
+                    if (!days) return;
+                    const est = days * PER_DAY;
+                    budgetEl.value = est;
+                    helper.textContent = `Estimated total for ${days} day(s): ₱${est.toLocaleString()}`;
+                }
+                function updateDurationFromBudget(){
+                    const budget = parseInt(budgetEl.value || '0', 10);
+                    if (!budget) return;
+                    const days = Math.max(1, Math.floor(budget / PER_DAY));
+                    // try to select the closest option by days
+                    let best = null; let bestDiff = Infinity;
+                    Array.from(durationEl.options).forEach(opt => {
+                        const d = parseDuration(opt.value);
+                        if (d){
+                            const diff = Math.abs(d - days);
+                            if (diff < bestDiff){ bestDiff = diff; best = opt.value; }
+                        }
+                    });
+                    if (best) durationEl.value = best;
+                    helper.textContent = `Estimated ${days} day(s) based on ₱${budget.toLocaleString()}. Per-day estimate: ₱${PER_DAY.toLocaleString()}`;
+                }
+                durationEl.addEventListener('change', updateBudgetFromDuration);
+                budgetEl.addEventListener('input', updateDurationFromBudget);
+                // Date inputs
+                const startInput = document.getElementById('itineraryStartDate');
+                const endInput = document.getElementById('itineraryEndDate');
+
+                const MS_PER_DAY = 24 * 60 * 60 * 1000;
+                function calcDaysFromDates(s, e) {
+                    try {
+                        const sd = new Date(s);
+                        const ed = new Date(e);
+                        if (isNaN(sd) || isNaN(ed)) return 0;
+                        const diff = Math.floor((ed - sd) / MS_PER_DAY) + 1;
+                        return Math.max(1, diff);
+                    } catch (err) { return 0; }
+                }
+
+                function setDurationToClosest(days) {
+                    if (!days) return;
+                    let best = null; let bestDiff = Infinity;
+                    Array.from(durationEl.options).forEach(opt => {
+                        const d = parseDuration(opt.value);
+                        if (d) {
+                            const diff = Math.abs(d - days);
+                            if (diff < bestDiff) { bestDiff = diff; best = opt.value; }
+                        }
+                    });
+                    if (best) durationEl.value = best;
+                }
+
+                function updateDurationAndBudgetFromDates() {
+                    if (!startInput || !endInput) return;
+                    const s = startInput.value; const e = endInput.value;
+                    if (!s || !e) return;
+                    if (new Date(s) > new Date(e)) { endInput.value = s; }
+                    const days = calcDaysFromDates(s,e);
+                    if (days) {
+                        setDurationToClosest(days);
+                        const est = days * PER_DAY;
+                        budgetEl.value = est;
+                        helper.textContent = `Estimated total for ${days} day(s): ₱${est.toLocaleString()}`;
+                    }
+                }
+
+                function updateEndDateFromDuration() {
+                    if (!startInput) return;
+                    const s = startInput.value;
+                    if (!s) return;
+                    const days = parseDuration(durationEl.value);
+                    if (!days) return;
+                    const sd = new Date(s);
+                    const newEnd = new Date(sd.getTime() + (days - 1) * MS_PER_DAY);
+                    endInput.value = newEnd.toISOString().slice(0,10);
+                }
+
+                // Wire events
+                if (startInput && endInput) {
+                    startInput.addEventListener('change', function(){ if (endInput.value && new Date(startInput.value) > new Date(endInput.value)) endInput.value = startInput.value; updateDurationAndBudgetFromDates(); });
+                    endInput.addEventListener('change', updateDurationAndBudgetFromDates);
+                }
+
+                durationEl.addEventListener('change', function(){ updateBudgetFromDuration(); updateEndDateFromDuration(); });
+                budgetEl.addEventListener('input', function(){ updateDurationFromBudget(); updateEndDateFromDuration(); });
+
+                // initialize from dates if present, otherwise from duration
+                if (startInput && endInput && startInput.value && endInput.value) {
+                    updateDurationAndBudgetFromDates();
+                } else {
+                    updateBudgetFromDuration();
+                }
+            }, 0);
+        }
+    </script>
+</body>
+</html>

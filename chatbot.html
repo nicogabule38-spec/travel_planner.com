@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journey 4 Life | Travel Assistant</title>
+    <link rel="stylesheet" href="css/hover-animations.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <style>
+    .chat-box { height: 400px; overflow-y: auto; }
+  </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+  <div class="w-full max-w-md bg-white shadow-lg rounded-xl p-5">
+    <h1 class="text-xl font-bold text-center text-blue-600 mb-4">
+      🌴 Journey 4 Life Travel Assistant
+    </h1>
+
+    <div id="chat" class="chat-box border rounded-lg p-3 mb-3 bg-gray-50"></div>
+
+    <form id="chatForm" class="flex">
+      <div style="position:relative;display:flex;width:100%">
+        <input type="text" id="userInput" placeholder="Ask about destinations..." 
+               class="flex-grow border border-gray-300 rounded-l-lg px-3 py-2 focus:outline-none" style="padding-right:48px">
+
+        <!-- Microphone button -->
+        <button id="micBtn" type="button" title="Speak your destination"
+                style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;font-size:18px;padding:6px;color:#1f2937">
+          🎙️
+        </button>
+      </div>
+      <button type="submit" 
+              class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700">
+        Send
+      </button>
+    </form>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById('chat');
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+
+    // Destinations will be loaded from destinations.html (live site content)
+    let destinations = [];
+    let destinationsLoaded = false;
+
+    // Load destination data from the site's destinations.html page.
+    // Prefer extracting the JS `destinations` object inside getDestinationData() for richer metadata.
+    async function loadDestinationsFromPage() {
+      try {
+        const res = await fetch('destinations.html');
+        const text = await res.text();
+
+        // Try to extract JS object literal assigned to `const destinations = { ... }` inside the file
+        const jsIndex = text.indexOf('const destinations =');
+        if (jsIndex !== -1) {
+          const braceStart = text.indexOf('{', jsIndex);
+          if (braceStart !== -1) {
+            let depth = 0;
+            let end = -1;
+            for (let i = braceStart; i < text.length; i++) {
+              const ch = text[i];
+              if (ch === '{') depth++;
+              else if (ch === '}') { depth--; if (depth === 0) { end = i; break; } }
+            }
+            if (end !== -1) {
+              const objText = text.slice(braceStart, end + 1);
+              try {
+                // Evaluate the object literal in a safe function scope
+                const data = (new Function('return ' + objText))();
+                const items = [];
+                for (const key of Object.keys(data)) {
+                  const v = data[key];
+                  const name = v.name || key;
+                  const description = v.description || '';
+                  const image = v.image || '';
+                  const location = (v.location || '').toLowerCase();
+                  const categoryGuess = (v.category || '') || (v.rating ? 'place' : 'place');
+
+                  // derive a normalized category from name/description
+                  let category = (categoryGuess || '').toLowerCase();
+                  const desc = (description || '').toLowerCase();
+                  if (/restaurant|bar|cafe|bistro|grill|seafood|eat|dine/.test(name.toLowerCase() + ' ' + desc)) category = 'restaurant';
+                  if (/beach|island|surf|lagoon/.test(name.toLowerCase() + ' ' + desc)) category = 'beach';
+                  if (/falls|mount|mountain|park|view|viewpoint|lake|river|falls|trek/.test(name.toLowerCase() + ' ' + desc)) category = 'place';
+
+                  items.push({ name, description, image, location, category });
+                }
+                destinations = items;
+                destinationsLoaded = true;
+                console.log('Loaded', destinations.length, 'destinations from destinations.html (JS object)');
+                return;
+              } catch (e) {
+                console.warn('Failed to eval destinations object, falling back to DOM parse', e);
+              }
+            }
+          }
+        }
+
+        // Fallback: parse destination-card elements
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        const cards = Array.from(doc.querySelectorAll('.destination-card'));
+        const items = [];
+        cards.forEach(card => {
+          const h3 = card.querySelector('h3');
+          const p = card.querySelector('p');
+          const name = h3 ? h3.textContent.trim() : (card.dataset.name || '').trim();
+          const description = p ? p.textContent.trim() : (card.dataset.description || '').trim();
+          const image = card.dataset.image || (card.querySelector('img') ? card.querySelector('img').src : '');
+          const category = (card.dataset.category || '').toLowerCase();
+          const region = (card.dataset.region || '').toLowerCase();
+
+          if (name) items.push({ name, description, image, category, region });
+        });
+
+        destinations = items;
+        destinationsLoaded = true;
+        console.log('Loaded', destinations.length, 'destinations from destinations.html (DOM fallback)');
+      } catch (err) {
+        console.error('Error loading destinations.html:', err);
+        // keep fallback empty
+        destinationsLoaded = true;
+      }
+    }
+
+    // Load on script start
+    loadDestinationsFromPage();
+
+    // Conversation context to support follow-up queries like "other location"
+    let lastContext = { budget: null, location: null, lastMatches: [], lastQuery: null };
+
+    // Parse user query for budget, location, and type keywords, then filter destinations
+    function parseQuery(query) {
+      const q = query.toLowerCase();
+
+      // budget: look for 'under 2000', 'below 2000', 'under ₱2000', '2000 budget' etc.
+      let budgetMatch = q.match(/(?:under|below|less than)\s*₱?\s*([0-9,]+)/i) || q.match(/₱\s*([0-9,]+)/i) || q.match(/([0-9,]+)\s*(?:pesos|php|₱)/i) || q.match(/budget\s*of\s*₱?\s*([0-9,]+)/i);
+      let budget = null;
+      if (budgetMatch) {
+        budget = parseInt(budgetMatch[1].replace(/,/g, ''), 10);
+      }
+
+      // location and region detection
+      let location = null;
+      let region = null;
+
+      // Check for major regions first (Luzon, Visayas, Mindanao)
+      if (/\b(luzon|visayas|mindanao)\b/i.test(q)) {
+        region = q.match(/\b(luzon|visayas|mindanao)\b/i)[1].toLowerCase();
+      }
+
+      // Then check for specific locations within regions
+      const inMatch = q.match(/(?:in|near|around|at)\s+([a-z\s]+)/i);
+      if (inMatch) {
+        location = inMatch[1].trim().split(/[\.\,\?]/)[0];
+      } else {
+        // fallback: detect any region or city name present in dataset
+        for (const d of destinations) {
+          if (d.region && q.includes(d.region.toLowerCase())) { 
+            location = d.region.toLowerCase(); 
+            break; 
+          }
+          if (d.city && q.includes(d.city.toLowerCase())) { 
+            location = d.city.toLowerCase(); 
+            break; 
+          }
+          if (q.includes(d.name.toLowerCase())) { 
+            location = d.city ? d.city.toLowerCase() : d.region ? d.region.toLowerCase() : null; 
+            break; 
+          }
+        }
+      }
+
+      // Region mapping for cities/locations
+      function getRegionForLocation(loc) {
+        const luzonCities = ['manila', 'quezon', 'baguio', 'vigan', 'batangas', 'tagaytay', 'zambales', 'pampanga'];
+        const visayasCities = ['cebu', 'bohol', 'iloilo', 'bacolod', 'tacloban', 'boracay', 'negros', 'samar'];
+        const mindanaoCities = ['davao', 'cagayan de oro', 'zamboanga', 'siargao', 'camiguin', 'butuan', 'surigao', 'cotabato'];
+        
+        loc = loc.toLowerCase();
+        if (luzonCities.some(city => loc.includes(city))) return 'luzon';
+        if (visayasCities.some(city => loc.includes(city))) return 'visayas';
+        if (mindanaoCities.some(city => loc.includes(city))) return 'mindanao';
+        return null;
+      }
+
+      // If we have a location but no region, try to determine the region
+      if (location && !region) {
+        region = getRegionForLocation(location);
+      }
+
+      // detect requested categories/types and normalize to match destinations.html values
+      // valid normalized categories: 'landmarks', 'spots', 'foods', 'restaurants'
+      const types = [];
+      if (/\b(?:food|foods|local food|cuisine|delicacy|dish|dishes|meal|meals)\b/i.test(q)) types.push('foods');
+      if (/\b(?:restaurant|restaurants|dining|dine|cafe|café|eatery|bistro)\b/i.test(q)) types.push('restaurants');
+      if (/\b(?:landmark|landmarks|monument|historical|heritage|church|museum)\b/i.test(q)) types.push('landmarks');
+      if (/\b(?:tourist spot|spot|spots|attraction|attractions|sightseeing|places to visit|place to visit|spot)\b/i.test(q)) types.push('spots');
+
+      // If user mentions 'near' or only provides a region/location, default to all main categories
+      if (types.length === 0 && (/\bnear\b/.test(q) || /\b(in|inside|at|around)\b/.test(q) || region || location)) {
+        types.push('landmarks', 'spots', 'foods', 'restaurants');
+      }
+
+      // detect 'all locations' intent (e.g. "all locations near baguio")
+      const allLocations = /\ball\b/.test(q) && /(location|locations|places|nearby|near in|near)/.test(q);
+
+      // normalize location tokens (take first word for matching 'baguio')
+      if (location) {
+        location = location.split(/\s+/)[0];
+      }
+
+      return { budget, location, region, allLocations, types };
+    }
+
+    // Simple intent detection: return true if query looks like a destination request
+    function isDestinationIntent(query) {
+      const q = query.toLowerCase();
+      // destination-related verbs and keywords
+      const destKeywords = /\b(destination|destinations|show me|recommend|recommendation|near|in|foods|food|restaurants|landmarks|spots|attractions|tourist|places)\b/i;
+      return destKeywords.test(q);
+    }
+
+
+    function filterDestinations({ budget, location, region, allLocations, types }) {
+      return destinations.filter(d => {
+        // if allLocations is requested, ignore budget and include any matching location
+        const matchesBudget = (allLocations || budget == null) ? true : (d.cost == null ? true : (d.cost <= budget));
+        
+        // Function to determine region for a destination
+        function getDestinationRegion(d) {
+          const luzonKeywords = ['manila', 'quezon', 'baguio', 'vigan', 'batangas', 'tagaytay', 'zambales', 'pampanga', 'luzon'];
+          const visayasKeywords = ['cebu', 'bohol', 'iloilo', 'bacolod', 'tacloban', 'boracay', 'negros', 'samar', 'visayas'];
+          const mindanaoKeywords = ['davao', 'cagayan de oro', 'zamboanga', 'siargao', 'camiguin', 'butuan', 'surigao', 'cotabato', 'mindanao'];
+          
+          const text = (d.city + ' ' + d.region + ' ' + d.location + ' ' + d.name).toLowerCase();
+          
+          if (luzonKeywords.some(k => text.includes(k))) return 'luzon';
+          if (visayasKeywords.some(k => text.includes(k))) return 'visayas';
+          if (mindanaoKeywords.some(k => text.includes(k))) return 'mindanao';
+          return null;
+        }
+
+        // Enhanced location and region matching
+        let matchesLocation = true;
+        
+        if (region) {
+          // If a major region is specified (Luzon, Visayas, Mindanao)
+          const destRegion = getDestinationRegion(d);
+          matchesLocation = destRegion === region;
+        } else if (location) {
+          // If a specific location is specified
+          matchesLocation = (
+            (d.city && d.city.toLowerCase().includes(location.toLowerCase())) ||
+            (d.region && d.region.toLowerCase().includes(location.toLowerCase())) ||
+            (d.location && d.location.toLowerCase().includes(location.toLowerCase())) ||
+            (d.name && d.name.toLowerCase().includes(location.toLowerCase())) ||
+            (d.description && d.description.toLowerCase().includes(location.toLowerCase()))
+          );
+        }
+
+          // Category matching - prefer exact category equality (normalized to lower-case)
+          let matchesType = true;
+          if (types && types.length > 0) {
+            const content = (d.name + ' ' + (d.description||'') + ' ' + (d.category||'')).toLowerCase();
+            matchesType = types.some(type => {
+              // direct match with dataset category
+              if ((d.category || '').toLowerCase() === type) return true;
+
+              // fallback: keyword based
+              switch(type) {
+                case 'landmarks':
+                  return /landmark|monument|historical|heritage|church|museum|palace|ruins|shrine/.test(content);
+                case 'spots':
+                  return /spot|spots|tourist|attraction|sightseeing|park|view|falls|island|beach|lagoon|cave|falls/.test(content);
+                case 'foods':
+                  return /food|foods|cuisine|delicacy|dish|specialty|snack|kakanin|dessert|lecho?n|pancit|halo-halo|bibingka|silvanas|piaya|torta/.test(content);
+                case 'restaurants':
+                  return /restaurant|restaurants|dining|cafe|eatery|bistro|grill|resto|food house|food hall/.test(content);
+                default:
+                  return false;
+              }
+            });
+        }
+
+        return matchesBudget && matchesLocation && matchesType;
+      });
+    }
+
+    function formatCurrency(n) {
+      if (typeof n !== 'number') return '';
+      return '₱' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function showRecommendationsPopup(matches, query, typesRequested) {
+      // remove existing
+      const existing = document.getElementById('recommendationModal');
+      if (existing) existing.remove();
+
+      const modal = document.createElement('div');
+      modal.id = 'recommendationModal';
+      modal.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;';
+      const inner = document.createElement('div');
+      inner.style.cssText = 'background:white;padding:20px;border-radius:10px;max-width:900px;width:95%;max-height:80vh;overflow:auto;';
+      inner.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h2 style="margin:0;">Recommendations for: <em>${query}</em></h2><button id="closeRec" style="background:#e74c3c;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">Close</button></div>`;
+
+      if (matches.length === 0) {
+        inner.innerHTML += `<p>No destinations match your request. Try a different budget or location.</p>`;
+      } else if (typesRequested && typesRequested.length > 0) {
+          // Group results by requested normalized categories
+          const normalized = ['landmarks','spots','foods','restaurants'];
+          const grouped = {};
+          normalized.forEach(n => grouped[n] = []);
+
+          matches.forEach(m => {
+            const cat = (m.category || '').toLowerCase();
+            // If destination category matches a normalized category, push directly
+            if (normalized.includes(cat)) {
+              grouped[cat].push(m);
+              return;
+            }
+            // otherwise try to heuristically place it into categories
+            const content = (m.name + ' ' + (m.description||'')).toLowerCase();
+            if (/restaurant|cafe|eat|dine|resto/.test(content)) grouped['restaurants'].push(m);
+            else if (/landmark|monument|historical|church|museum|palace|ruins|shrine/.test(content)) grouped['landmarks'].push(m);
+            else if (/tourist|attraction|spot|view|park|falls|island|beach|lagoon|cave/.test(content)) grouped['spots'].push(m);
+            else if (/food|cuisine|delicacy|dish|specialty|kakanin|dessert|lechon|pancit|halo-halo/.test(content)) grouped['foods'].push(m);
+            else grouped['spots'].push(m); // fallback
+          });
+
+          // Only display requested types in the order the user asked (or normalized order)
+          const displayOrder = typesRequested.length ? typesRequested : normalized;
+          displayOrder.forEach(type => {
+            const items = grouped[type] || [];
+            if (!items || items.length === 0) return;
+
+            const title = ({
+              landmarks: 'Landmarks',
+              spots: 'Spots & Attractions',
+              foods: 'Foods & Local Dishes',
+              restaurants: 'Restaurants & Eateries'
+            })[type] || type;
+
+            const section = document.createElement('div');
+            section.style.cssText = 'margin-bottom:24px;';
+            section.innerHTML = `<h3 style="margin:0 0 12px;color:#444;font-size:1.2rem;">${title} (${items.length})</h3>`;
+
+            const list = document.createElement('div');
+            list.style.display = 'grid';
+            list.style.gridTemplateColumns = 'repeat(auto-fit,minmax(220px,1fr))';
+            list.style.gap = '12px';
+
+            items.forEach(m => {
+              const card = document.createElement('div');
+              card.style.cssText = 'border-radius:8px;padding:10px;background:#f8f9fa;display:flex;flex-direction:column;gap:8px;';
+              card.innerHTML = `
+                <div style="height:120px;overflow:hidden;border-radius:6px;background:#ddd;display:flex;align-items:center;justify-content:center;">
+                  ${m.image ? `<img src="${m.image}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="padding:20px;color:#666;">No image</div>'}
+                </div>
+                <div style="font-weight:700;">${m.name}</div>
+                <div style="font-size:0.9rem;color:#555;">${m.description}</div>
+                ${m.category ? `<div style="font-size:0.85rem;color:#666;margin-top:6px;">Type: ${m.category}</div>` : ''}
+                ${m.cost ? `<div style="font-size:0.9rem;color:#333;font-weight:600;">${formatCurrency(m.cost)}</div>` : ''}
+                <div style="margin-top:auto; display:flex; gap:8px;">
+                  <button style="flex:1;background:#667eea;color:white;border:none;padding:8px;border-radius:6px;cursor:pointer;" onclick="window.open('destinations.html','_self')">View</button>
+                </div>
+              `;
+              list.appendChild(card);
+            });
+
+            section.appendChild(list);
+            inner.appendChild(section);
+          });
+      } else {
+        // Default: show all matches in a grid
+        const list = document.createElement('div');
+        list.style.display = 'grid';
+        list.style.gridTemplateColumns = 'repeat(auto-fit,minmax(220px,1fr))';
+        list.style.gap = '12px';
+        matches.forEach(m => {
+          const card = document.createElement('div');
+          card.style.cssText = 'border-radius:8px;padding:10px;background:#f8f9fa;display:flex;flex-direction:column;gap:8px;';
+          card.innerHTML = `
+            <div style="height:120px;overflow:hidden;border-radius:6px;background:#ddd;display:flex;align-items:center;justify-content:center;">
+              ${m.image ? `<img src="${m.image}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;">` : '<div style="padding:20px;color:#666;">No image</div>'}
+            </div>
+            <div style="font-weight:700;">${m.name}</div>
+            <div style="font-size:0.9rem;color:#555;">${m.description}</div>
+            ${m.category ? `<div style="font-size:0.85rem;color:#666;margin-top:6px;">Type: ${m.category}</div>` : ''}
+            ${m.cost ? `<div style="font-size:0.9rem;color:#333;font-weight:600;">${formatCurrency(m.cost)}</div>` : ''}
+            <div style="margin-top:auto; display:flex; gap:8px;">
+              <button style="flex:1;background:#667eea;color:white;border:none;padding:8px;border-radius:6px;cursor:pointer;" onclick="window.open('destinations.html','_self')">View</button>
+            </div>
+          `;
+          list.appendChild(card);
+        });
+        inner.appendChild(list);
+      }
+
+      modal.appendChild(inner);
+      document.body.appendChild(modal);
+
+      document.getElementById('closeRec').addEventListener('click', () => modal.remove());
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      // show user message
+      chatBox.innerHTML += `<div class='text-right my-1'>
+        <span class='bg-blue-500 text-white px-3 py-2 rounded-lg inline-block'>${message}</span>
+      </div>`;
+      userInput.value = '';
+
+      // ensure destinations are loaded
+      if (!destinationsLoaded) {
+        chatBox.innerHTML += `<div class='text-left my-1'><span class='bg-gray-200 text-gray-800 px-3 py-2 rounded-lg inline-block'>Loading site data, please wait...</span></div>`;
+        await loadDestinationsFromPage();
+      }
+
+      // Basic intent detection: respond to any location query or destination request
+      const lower = message.toLowerCase();
+  // Only process as destination query when intent detected
+  if (isDestinationIntent(message)) {
+        // Detect if user asked for 'other' results
+        const asksForOther = lower.includes('other') || lower.includes('another');
+
+        // Parse incoming query
+        const parsed = parseQuery(message);
+
+        // If user asks for 'other' and didn't provide a new location/budget, reuse lastContext
+        if (asksForOther) {
+          if (!parsed.location) parsed.location = lastContext.location;
+          if (!parsed.budget) parsed.budget = lastContext.budget;
+          if (!parsed.allLocations) parsed.allLocations = lastContext.allLocations;
+        }
+
+        let matches = filterDestinations(parsed);
+
+        // If asking for other results, exclude previously shown matches
+        if (asksForOther && lastContext.lastMatches && lastContext.lastMatches.length > 0) {
+          const previousNames = new Set(lastContext.lastMatches.map(m => m.name));
+          matches = matches.filter(m => !previousNames.has(m.name));
+        }
+  // Compose a detailed reply based on the query
+        let replyText = '';
+        if (matches.length === 0) {
+          replyText = `I couldn't find any places near ${parsed.location || 'that location'}. Try a different location or be more specific.`;
+        } else {
+          const categories = parsed.types && parsed.types.length > 0 
+            ? parsed.types.map(t => t.replace('_', ' ')).join(', ') 
+            : 'places';
+          const location = parsed.region 
+            ? parsed.region.charAt(0).toUpperCase() + parsed.region.slice(1)
+            : parsed.location || 'that location';
+          replyText = `I found ${matches.length} ${categories} in ${location}. Here are the recommendations:`;
+        }
+
+        chatBox.innerHTML += `<div class='text-left my-1'>
+          <span class='bg-gray-200 text-gray-800 px-3 py-2 rounded-lg inline-block'>${replyText}</span>
+        </div>`;
+
+        // show popup with recommendations and update conversation context
+        const popupLabel = parsed.location || message;
+        showRecommendationsPopup(matches, popupLabel, parsed.types);
+  lastContext = { budget: parsed.budget, location: parsed.location, allLocations: parsed.allLocations, types: parsed.types, lastMatches: matches.slice(0,50), lastQuery: message };
+      } else {
+        // Not a destination intent — show a helpful or generic reply and do not open popup
+        chatBox.innerHTML += `<div class='text-left my-1'>
+          <span class='bg-gray-200 text-gray-800 px-3 py-2 rounded-lg inline-block'>(Error) I can help with travel recommendations. Try asking for destinations.</span>
+        </div>`;
+      }
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+
+    // --- Speech Recognition (Microphone) Integration ---
+    (function setupSpeechRecognition() {
+      const micBtn = document.getElementById('micBtn');
+      const input = document.getElementById('userInput');
+
+      // Feature detection
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        micBtn.style.display = 'none';
+        return;
+      }
+
+      const recognizer = new SpeechRecognition();
+      recognizer.lang = 'en-US';
+      recognizer.interimResults = true;
+      recognizer.maxAlternatives = 1;
+
+      let listening = false;
+      let interimTranscript = '';
+
+      function updateMicUI() {
+        micBtn.textContent = listening ? '🛑' : '🎙️';
+        micBtn.style.color = listening ? '#dc3545' : '#1f2937';
+      }
+
+      micBtn.addEventListener('click', () => {
+        if (listening) {
+          recognizer.stop();
+        } else {
+          interimTranscript = '';
+          recognizer.start();
+        }
+      });
+
+      recognizer.onstart = () => {
+        listening = true;
+        updateMicUI();
+        // hint to user
+        input.placeholder = 'Listening... speak the place name';
+      };
+
+      recognizer.onend = () => {
+        listening = false;
+        updateMicUI();
+        input.placeholder = 'Ask about destinations...';
+      };
+
+      recognizer.onerror = (evt) => {
+        console.error('SpeechRecognition error', evt.error);
+        listening = false;
+        updateMicUI();
+      };
+
+      recognizer.onresult = (evt) => {
+        let final = '';
+        interimTranscript = '';
+        for (let i = evt.resultIndex; i < evt.results.length; i++) {
+          const res = evt.results[i];
+          if (res.isFinal) final += res[0].transcript;
+          else interimTranscript += res[0].transcript;
+        }
+
+        // If there's a final transcript, put it in the input (and optionally submit)
+        if (final.trim()) {
+          input.value = final.trim();
+          // optional: auto-submit after speech finished - comment/uncomment as desired
+          // chatForm.requestSubmit?.(); // modern browsers
+          // Or dispatch submit event
+          // chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        } else {
+          // show interim transcript in the input (do not overwrite existing typed text unless empty)
+          if (!input.value || input.value === '') input.value = interimTranscript.trim();
+          else {
+            // if user already typed something, show interim in placeholder
+            input.placeholder = interimTranscript.trim() || 'Listening...';
+          }
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

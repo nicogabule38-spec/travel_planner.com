@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - JOURNEY 4 LIFE</title>
+    <link rel="stylesheet" href="css/hover-animations.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-decoration: none;
+            display:flex; align-items:center; gap:10px;
+        }
+        
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .admin-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 5px solid #e74c3c;
+            cursor: pointer;
+        }
+        
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .admin-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .main-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .widget {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .widget h3 {
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #e74c3c;
+            border-bottom-color: #e74c3c;
+        }
+        
+        .tab:hover {
+            color: #e74c3c;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn:hover {
+            background: #c0392b;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .quick-action {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: background 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .quick-action:hover {
+            background: #e9ecef;
+            border-color: #e74c3c;
+        }
+        
+        .quick-action-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .quick-action h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .quick-action p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .recent-activity {
+            list-style: none;
+        }
+        
+        .recent-activity li {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .recent-activity li:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .activity-content h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .activity-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo"><img src="images/Journey.png" alt="logo" style="height:60px; width:auto;"/>  Journey 4 Life - Admin</a>
+                <div class="admin-info">
+                    <div class="admin-badge">ADMIN</div>
+                    <span id="adminEmail">admin@journey4life.com</span>
+                    <div class="notification-dropdown" style="position: relative; display: inline-block; margin: 0 15px;">
+                        <div class="notification-bell" onclick="toggleNotifications()" style="cursor: pointer; position: relative;">
+                            🔔
+                            <span id="notificationCount" style="
+                                position: absolute;
+                                top: -8px;
+                                right: -8px;
+                                background: #e74c3c;
+                                color: white;
+                                border-radius: 50%;
+                                padding: 2px 6px;
+                                font-size: 0.7rem;
+                                display: none;
+                            ">0</span>
+                        </div>
+                        <div id="notificationDropdown" style="
+                            display: none;
+                            position: absolute;
+                            right: 0;
+                            top: 100%;
+                            width: 300px;
+                            background: white;
+                            border-radius: 10px;
+                            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                            z-index: 1000;
+                            margin-top: 10px;
+                            max-height: 400px;
+                            overflow-y: auto;
+                        ">
+                            <div style="padding: 15px; border-bottom: 1px solid #eee;">
+                                <h3 style="margin: 0; color: #333;">Notifications</h3>
+                            </div>
+                            <div id="notificationList" style="padding: 10px;">
+                                <!-- Notifications will be inserted here -->
+                            </div>
+                            <div style="padding: 10px; text-align: center; border-top: 1px solid #eee;">
+                                <button onclick="markAllAsRead()" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9rem;">Mark all as read</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="dashboard-header">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p>Manage your travel platform efficiently</p>
+                </div>
+                <div>
+                    
+                    <button class="btn btn-secondary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+            
+            <div class="admin-stats">
+                <div class="stat-card" role="button" tabindex="0" aria-pressed="false" onclick="switchTab('users')" onkeypress="if(event.key==='Enter') switchTab('users')">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card" role="button" tabindex="0" aria-pressed="false" onclick="switchTab('destinations')" onkeypress="if(event.key==='Enter') switchTab('destinations')">
+                    <div class="stat-icon">📍</div>
+                    <div class="stat-number" id="totalDestinations">0</div>
+                    <div class="stat-label">Destinations</div>
+                </div>
+                <div class="stat-card" role="button" tabindex="0" aria-pressed="false" onclick="switchTab('itineraries')" onkeypress="if(event.key==='Enter') switchTab('itineraries')">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-number" id="totalItineraries">0</div>
+                    <div class="stat-label">Itineraries</div>
+                </div>
+                <div class="stat-card" role="button" tabindex="0" aria-pressed="false" onclick="switchTab('reviews')" onkeypress="if(event.key==='Enter') switchTab('reviews')">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-number" id="totalReviews">0</div>
+                    <div class="stat-label">Reviews</div>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <div class="main-content">
+                    <div class="admin-tabs">
+                        <button class="tab active" data-tab="users" onclick="switchTab('users')">Users</button>
+                        <button class="tab" data-tab="destinations" onclick="switchTab('destinations')">Destinations</button>
+                        <button class="tab" data-tab="itineraries" onclick="switchTab('itineraries')">Itineraries</button>
+                        <button class="tab" data-tab="reviews" onclick="switchTab('reviews')">Reviews</button>
+                    </div>
+                    
+                    <div id="users-tab" class="tab-content active">
+                        <h3>User Management</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="destinations-tab" class="tab-content">
+                        <h3>Destination Management</h3>
+                        <div style="margin-bottom: 20px;">
+                            <button class="btn" onclick="addDestination()">Add New Destination</button>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Location</th>
+                                    <th>Category</th>
+                                    <th>Rating</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="destinationsTableBody">
+                                <!-- Destinations will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="itineraries-tab" class="tab-content">
+                        <h3>Itinerary Management</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Creator</th>
+                                    <th>Destinations</th>
+                                    <th>Duration</th>
+                                    <th>Budget</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody id="itinerariesTableBody">
+                                <!-- Itineraries will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="reviews-tab" class="tab-content">
+                        <h3>Review Management</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Destination</th>
+                                    <th>Rating</th>
+                                    <th>Comment</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reviewsTableBody">
+                                <!-- Reviews will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="sidebar">
+                    <div class="widget">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <div class="quick-action" onclick="addDestination()">
+                                <div class="quick-action-icon">📍</div>
+                                <h4>Add Destination</h4>
+                                <p>New place</p>
+                            </div>
+                            <div class="quick-action" onclick="viewAnalytics()">
+                                <div class="quick-action-icon">📊</div>
+                                <h4>View Analytics</h4>
+                                <p>Reports</p>
+                            </div>
+                            <div class="quick-action" onclick="manageUsers()">
+                                <div class="quick-action-icon">👥</div>
+                                <h4>Manage Users</h4>
+                                <p>User control</p>
+                            </div>
+                            <div class="quick-action" onclick="systemSettings()">
+                                <div class="quick-action-icon">⚙️</div>
+                                <h4>Settings</h4>
+                                <p>System config</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget">
+                        <h3>Recent Activity</h3>
+                        <ul class="recent-activity" id="recentActivity">
+                            <li>
+                                <div class="activity-icon">🎉</div>
+                                <div class="activity-content">
+                                    <h4>Admin Login</h4>
+                                    <p>You've successfully logged in</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check if admin is logged in
+        const admin = JSON.parse(localStorage.getItem('admin'));
+        if (!admin) {
+            window.location.href = 'admin-login.html';
+        }
+        
+        // Update admin email display
+        document.getElementById('adminEmail').textContent = admin.email;
+        
+        // Load admin data
+        function loadAdminData() {
+            // Load users
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Load destinations (admin-managed destinations)
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            
+            // Load itineraries
+            const itineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            
+            // Load reviews
+            const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+            
+            // Update stats
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalDestinations').textContent = destinations.length;
+            document.getElementById('totalItineraries').textContent = itineraries.length;
+            document.getElementById('totalReviews').textContent = reviews.length;
+            
+            // Load tables
+            loadUsersTable(users);
+            loadDestinationsTable(destinations);
+            loadItinerariesTable(itineraries);
+            loadReviewsTable(reviews);
+        }
+        
+        function loadUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            if (users.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="6" style="text-align: center; color: #666;">No users registered yet</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+                users.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>${new Date(user.createdAt || Date.now()).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="viewUser('${user.id}')">View</button>
+                        <button class="btn btn-danger" onclick="deleteUser('${user.id}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function loadDestinationsTable(destinations) {
+            const tbody = document.getElementById('destinationsTableBody');
+            tbody.innerHTML = '';
+            
+            if (destinations.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="7" style="text-align: center; color: #666;">No destinations added yet</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            destinations.forEach((dest, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dest.id || index + 1}</td>
+                    <td>${dest.name}</td>
+                    <td>${dest.location || 'N/A'}</td>
+                    <td>${dest.category || 'spots'}</td>
+                    <td>${dest.rating || 'N/A'} ${'⭐'.repeat(Math.floor(dest.rating || 0))}</td>
+                    <td><span class="status-badge status-${dest.status || 'active'}">${dest.status || 'active'}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editDestination('${dest.id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteDestination('${dest.id}')">Delete</button>
+                        <button class="btn btn-success" onclick="viewDestination('${dest.id}')">View</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function loadItinerariesTable(itineraries) {
+            const tbody = document.getElementById('itinerariesTableBody');
+            tbody.innerHTML = '';
+            
+            if (itineraries.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="6" style="text-align: center; color: #666;">No itineraries created yet</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            // Get users to find creator names
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+                itineraries.forEach((itin, index) => {
+                const creator = users.find(user => user.id === itin.userId);
+                const creatorName = creator ? creator.name : 'Unknown User';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${itin.id}</td>
+                    <td>${itin.title}</td>
+                    <td>${creatorName}</td>
+                    <td>${Array.isArray(itin.destinations) ? itin.destinations.join(', ') : ''}</td>
+                    <td>${itin.duration}</td>
+                    <td>${itin.budget || ''}</td>
+                    <td></td>
+                    <td>
+                        
+                        
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function loadReviewsTable(reviews) {
+            const tbody = document.getElementById('reviewsTableBody');
+            tbody.innerHTML = '';
+            
+            if (reviews.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="6" style="text-align: center; color: #666;">No reviews submitted yet</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            // Get users to find reviewer names
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+                reviews.forEach((review, index) => {
+                const reviewer = users.find(user => user.id === review.userId);
+                const reviewerName = reviewer ? reviewer.name : 'Unknown User';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${review.id || index + 1}</td>
+                    <td>${reviewerName}</td>
+                    <td>${review.destination}</td>
+                    <td>${'⭐'.repeat(review.rating)}</td>
+                    <td><span class="status-badge ${review.status === 'pending' ? 'status-pending' : 'status-active'}">${review.status}</span></td>
+                    <td>
+                        <button class="btn btn-success" onclick="approveReview('${review.id || index}')">Approve</button>
+                        <button class="btn btn-danger" onclick="deleteReview('${review.id || index}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Tab switching
+        function switchTab(tabName) {
+            if (!tabName) return;
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Find tab button by data-tab or fallback to first tab
+            const tabButton = document.querySelector(`.tab[data-tab="${tabName}"]`);
+            if (tabButton) tabButton.classList.add('active');
+
+            const content = document.getElementById(tabName + '-tab');
+            if (content) {
+                content.classList.add('active');
+                // Smooth scroll the content into view
+                content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Admin functions
+        function addDestination() {
+            const modal = document.createElement('div');
+            modal.id = 'addDestinationModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">Add New Destination</h2>
+                        <button onclick="closeAddDestinationModal()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+                    
+                    <form id="addDestinationForm">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Destination Name</label>
+                            <input type="text" id="destName" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Location</label>
+                            <input type="text" id="destLocation" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Description</label>
+                            <textarea id="destDescription" rows="3" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;"></textarea>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Image URL</label>
+                            <input type="url" id="destImageUrl" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Category</label>
+                            <select id="destCategory" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                                <option value="spots">Spots</option>
+                                <option value="landmarks">Landmarks</option>
+                                <option value="foods">Foods</option>
+                                <option value="restaurants">Restaurants</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Rating (1-5)</label>
+                            <input type="number" id="destRating" min="1" max="5" step="0.1" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button type="button" onclick="closeAddDestinationModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+                            <button type="submit" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Add Destination</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Handle form submission
+            document.getElementById('addDestinationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveNewDestination();
+            });
+        }
+        
+        function closeAddDestinationModal() {
+            const modal = document.getElementById('addDestinationModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function showNotification(message, details) {
+            const notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1001;
+                min-width: 300px;
+                opacity: 0;
+                transform: translateX(50px);
+                transition: all 0.3s ease;
+            `;
+            
+            notification.innerHTML = `
+                <h3 style="color: #28a745; margin: 0 0 10px 0;">${message}</h3>
+                <div style="color: #666; font-size: 0.9rem;">${details}</div>
+                <button onclick="this.parentElement.remove()" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px;">×</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(50px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        function saveNewDestination() {
+            const name = document.getElementById('destName').value;
+            const location = document.getElementById('destLocation').value;
+            const description = document.getElementById('destDescription').value;
+            const imageUrl = document.getElementById('destImageUrl').value;
+            const rating = parseFloat(document.getElementById('destRating').value);
+            const category = document.getElementById('destCategory') ? document.getElementById('destCategory').value : 'spots';
+            
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            const newDestination = {
+                id: Date.now(),
+                name: name,
+                location: location,
+                description: description,
+                image_url: imageUrl,
+                category: category,
+                // mapsQuery used by the user-facing page to open map for this destination
+                mapsQuery: `${name}${location ? ', ' + location : ''}`,
+                rating: rating,
+                status: 'active',
+                created_at: new Date().toISOString()
+            };
+            
+            destinations.push(newDestination);
+            localStorage.setItem('destinations', JSON.stringify(destinations));
+            
+            closeAddDestinationModal();
+            showNotification(
+                'New Destination Added!',
+                `<strong>${name}</strong> has been added successfully.<br>
+                Location: ${location}<br>
+                Category: ${category}<br>
+                Rating: ${'⭐'.repeat(Math.floor(rating))}`
+            );
+            loadAdminData();
+        }
+        
+        function editDestination(destId) {
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            const destination = destinations.find(d => d.id.toString() === destId.toString());
+            
+            if (!destination) {
+                showNotification('Error', 'Destination not found!', 'error');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'editDestinationModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">Edit Destination</h2>
+                        <button onclick="this.closest('#editDestinationModal').remove()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+                    
+                    <form id="editDestinationForm">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Destination Name</label>
+                            <input type="text" id="editDestName" required value="${destination.name}" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Location</label>
+                            <input type="text" id="editDestLocation" required value="${destination.location || ''}" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Description</label>
+                            <textarea id="editDestDescription" rows="3" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">${destination.description || ''}</textarea>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Image URL</label>
+                            <input type="url" id="editDestImageUrl" value="${destination.image_url || ''}" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Category</label>
+                            <select id="editDestCategory" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                                <option value="spots" ${destination.category === 'spots' ? 'selected' : ''}>Spots</option>
+                                <option value="landmarks" ${destination.category === 'landmarks' ? 'selected' : ''}>Landmarks</option>
+                                <option value="foods" ${destination.category === 'foods' ? 'selected' : ''}>Foods</option>
+                                <option value="restaurants" ${destination.category === 'restaurants' ? 'selected' : ''}>Restaurants</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Rating (1-5)</label>
+                            <input type="number" id="editDestRating" min="1" max="5" step="0.1" required value="${destination.rating || 1}" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Status</label>
+                            <select id="editDestStatus" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                                <option value="active" ${destination.status === 'active' ? 'selected' : ''}>Active</option>
+                                <option value="inactive" ${destination.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                                <option value="pending" ${destination.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            </select>
+                        </div>
+                        
+                        <input type="hidden" id="editDestId" value="${destination.id}">
+                        
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button type="button" onclick="this.closest('#editDestinationModal').remove()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+                            <button type="submit" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Handle form submission
+            document.getElementById('editDestinationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                updateDestination(destination.id);
+            });
+        }
+        
+        function updateDestination(destId) {
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            const index = destinations.findIndex(d => d.id.toString() === destId.toString());
+            
+            if (index === -1) {
+                showNotification('Error', 'Destination not found!', 'error');
+                return;
+            }
+            
+            const updatedDestination = {
+                ...destinations[index],
+                name: document.getElementById('editDestName').value,
+                location: document.getElementById('editDestLocation').value,
+                description: document.getElementById('editDestDescription').value,
+                image_url: document.getElementById('editDestImageUrl').value,
+                category: document.getElementById('editDestCategory').value,
+                rating: parseFloat(document.getElementById('editDestRating').value),
+                status: document.getElementById('editDestStatus').value,
+                mapsQuery: `${document.getElementById('editDestName').value}${document.getElementById('editDestLocation').value ? ', ' + document.getElementById('editDestLocation').value : ''}`,
+                updated_at: new Date().toISOString()
+            };
+            
+            destinations[index] = updatedDestination;
+            localStorage.setItem('destinations', JSON.stringify(destinations));
+            
+            const modal = document.getElementById('editDestinationModal');
+            if (modal) modal.remove();
+            
+            showNotification(
+                'Destination Updated!',
+                `<strong>${updatedDestination.name}</strong> has been updated successfully.`
+            );
+            
+            loadAdminData();
+        }
+        
+        function deleteDestination(destId) {
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            const destination = destinations.find(d => d.id.toString() === destId.toString());
+            
+            if (!destination) {
+                showNotification('Error', 'Destination not found!', 'error');
+                return;
+            }
+            
+            if (confirm(`Are you sure you want to delete "${destination.name}"?`)) {
+                const updatedDestinations = destinations.filter(d => d.id.toString() !== destId.toString());
+                localStorage.setItem('destinations', JSON.stringify(updatedDestinations));
+                
+                showNotification(
+                    'Destination Deleted',
+                    `<strong>${destination.name}</strong> has been deleted successfully.`
+                );
+                
+                loadAdminData();
+            }
+        }
+        
+        function viewDestination(destId) {
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            const destination = destinations.find(d => d.id.toString() === destId.toString());
+            
+            if (!destination) {
+                showNotification('Error', 'Destination not found!', 'error');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'viewDestinationModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">View Destination</h2>
+                        <button onclick="this.closest('#viewDestinationModal').remove()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        ${destination.image_url ? `
+                            <div style="margin-bottom: 20px;">
+                                <img src="${destination.image_url}" alt="${destination.name}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px;">
+                            </div>
+                        ` : ''}
+                        
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <h3 style="color: #333; margin-bottom: 15px;">${destination.name}</h3>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <strong>Location:</strong> ${destination.location || 'N/A'}
+                            </div>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <strong>Category:</strong> ${destination.category || 'spots'}
+                            </div>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <strong>Rating:</strong> ${destination.rating || 'N/A'} ${'⭐'.repeat(Math.floor(destination.rating || 0))}
+                            </div>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <strong>Status:</strong> <span class="status-badge status-${destination.status || 'active'}">${destination.status || 'active'}</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <strong>Description:</strong><br>
+                                ${destination.description || 'No description available.'}
+                            </div>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <strong>Added:</strong> ${new Date(destination.created_at).toLocaleString()}
+                            </div>
+                            
+                            ${destination.updated_at ? `
+                                <div style="margin-bottom: 10px;">
+                                    <strong>Last Updated:</strong> ${new Date(destination.updated_at).toLocaleString()}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button onclick="this.closest('#viewDestinationModal').remove()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+                        <button onclick="editDestination('${destination.id}')" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Edit</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function viewUser(userId) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+            // Robust id matching: support number/string mismatches
+            const user = users.find(u => {
+                if (!u || typeof u.id === 'undefined') return false;
+                return u.id == userId || (u.id.toString && userId.toString && u.id.toString() === userId.toString());
+            });
+
+            if (!user) {
+                alert('User not found!');
+                return;
+            }
+
+            // Use loose equality for filtering related records to handle id type differences
+            const userItineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]').filter(itin => itin.userId == userId);
+            const userReviews = JSON.parse(localStorage.getItem('reviews') || '[]').filter(rev => rev.userId == userId);
+            const userSavedDestinations = JSON.parse(localStorage.getItem('savedDestinations') || '[]').filter(dest => dest.userId == userId);
+
+            const joinedDate = new Date(user.createdAt || user.created_at || Date.now()).toLocaleString();
+
+            const modal = document.createElement('div');
+            modal.id = 'viewUserModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">User Profile</h2>
+                        <button onclick="closeViewUserModal()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">User Information</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <div style="margin-bottom: 10px;">
+                                <strong>Name:</strong> ${user.name}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>Email:</strong> ${user.email}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>User ID:</strong> ${user.id}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>Joined:</strong> ${joinedDate}
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>Status:</strong> <span style="color: #28a745;">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">User Statistics</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">${userItineraries.length}</div>
+                                <div style="color: #666;">Itineraries</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #28a745;">${userReviews.length}</div>
+                                <div style="color: #666;">Reviews</div>
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #ffc107;">${userSavedDestinations.length}</div>
+                                <div style="color: #666;">Saved Destinations</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">Recent Itineraries</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            ${userItineraries.length > 0 ? 
+                                userItineraries.slice(0, 3).map(itin => `
+                                    <div style="margin-bottom: 10px; padding: 10px; background: white; border-radius: 5px;">
+                                        <strong>${itin.title}</strong> - ${itin.duration} (${itin.status})
+                                    </div>
+                                `).join('') :
+                                '<div style="color: #666;">No itineraries created yet</div>'
+                            }
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">Recent Reviews</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            ${userReviews.length > 0 ? 
+                                userReviews.slice(0, 3).map(rev => `
+                                    <div style="margin-bottom: 10px; padding: 10px; background: white; border-radius: 5px;">
+                                        <strong>${rev.destination}</strong> - ${'⭐'.repeat(rev.rating)} (${rev.status})
+                                    </div>
+                                `).join('') :
+                                '<div style="color: #666;">No reviews submitted yet</div>'
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+        }
+        
+        function closeViewUserModal() {
+            const modal = document.getElementById('viewUserModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function deleteUser(index) {
+            // Delete user by id
+            const userId = index;
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIdx = users.findIndex(u => u.id === userId || u.id == userId || (u.id && u.id.toString() === userId.toString()));
+            if (userIdx === -1) {
+                alert('User not found!');
+                return;
+            }
+
+            const userName = users[userIdx].name || users[userIdx].email || userId;
+
+            if (!confirm(`Are you sure you want to delete user "${userName}"? This will remove their itineraries, reviews and saved destinations.`)) return;
+
+            // Remove user
+            users.splice(userIdx, 1);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Remove user's itineraries
+            const itineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]').filter(itin => !(itin.userId === userId || itin.userId == userId));
+            localStorage.setItem('savedItineraries', JSON.stringify(itineraries));
+
+            // Remove user's reviews
+            const reviews = JSON.parse(localStorage.getItem('reviews') || '[]').filter(r => !(r.userId === userId || r.userId == userId));
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+
+            // Remove user's saved destinations
+            const savedDestinations = JSON.parse(localStorage.getItem('savedDestinations') || '[]').filter(d => !(d.userId === userId || d.userId == userId));
+            localStorage.setItem('savedDestinations', JSON.stringify(savedDestinations));
+
+            showNotification('User Deleted', `${userName} has been removed.`);
+            loadAdminData();
+        }
+        
+        function approveItinerary(itineraryId) {
+            const itineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const idx = itineraries.findIndex(i => i.id === itineraryId || i.id == itineraryId || (i.id && i.id.toString() === itineraryId.toString()));
+            if (idx >= 0) {
+                itineraries[idx].status = 'approved';
+                localStorage.setItem('savedItineraries', JSON.stringify(itineraries));
+                showNotification('Itinerary Approved', 'The itinerary has been approved.');
+                loadAdminData();
+            } else {
+                alert('Itinerary not found.');
+            }
+        }
+        
+        function rejectItinerary(itineraryId) {
+            const itineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const idx = itineraries.findIndex(i => i.id === itineraryId || i.id == itineraryId || (i.id && i.id.toString() === itineraryId.toString()));
+            if (idx >= 0) {
+                if (!confirm('Are you sure you want to reject this itinerary?')) return;
+                itineraries[idx].status = 'rejected';
+                localStorage.setItem('savedItineraries', JSON.stringify(itineraries));
+                showNotification('Itinerary Rejected', 'The itinerary has been rejected.');
+                loadAdminData();
+            } else {
+                alert('Itinerary not found.');
+            }
+        }
+        
+        function approveReview(index) {
+            // Approve review by id
+            const reviewId = index;
+            const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+            const idx = reviews.findIndex(r => r.id === reviewId || r.id == reviewId || (r.id && r.id.toString() === reviewId.toString()));
+            if (idx >= 0) {
+                reviews[idx].status = 'approved';
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+                showNotification('Review Approved', 'The review has been approved.');
+                loadAdminData();
+            } else {
+                alert('Review not found.');
+            }
+        }
+        
+        function deleteReview(index) {
+            // Delete review by id
+            const reviewId = index;
+            let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+            const idx = reviews.findIndex(r => r.id === reviewId || r.id == reviewId || (r.id && r.id.toString() === reviewId.toString()));
+            if (idx === -1) {
+                alert('Review not found.');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this review?')) return;
+
+            const removed = reviews.splice(idx, 1);
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+            showNotification('Review Deleted', 'The review has been deleted.');
+            loadAdminData();
+            return removed;
+        }
+        
+        function viewAnalytics() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            const itineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+            
+            const modal = document.createElement('div');
+            modal.id = 'analyticsModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            // Calculate analytics
+            const totalUsers = users.length;
+            const totalDestinations = destinations.length;
+            const totalItineraries = itineraries.length;
+            const totalReviews = reviews.length;
+            const approvedItineraries = itineraries.filter(itin => itin.status === 'active').length;
+            const pendingItineraries = itineraries.filter(itin => itin.status === 'pending').length;
+            
+            // Popular destinations based on saved destinations
+            const savedDestinations = JSON.parse(localStorage.getItem('savedDestinations') || '[]');
+            const destinationCounts = {};
+            savedDestinations.forEach(dest => {
+                destinationCounts[dest.name] = (destinationCounts[dest.name] || 0) + 1;
+            });
+            const popularDestinations = Object.entries(destinationCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">Analytics Dashboard</h2>
+                        <button onclick="closeAnalyticsModal()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 style="color: #333; margin-bottom: 10px;">Total Users</h3>
+                            <div style="font-size: 2rem; font-weight: bold; color: #667eea;">${totalUsers}</div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 style="color: #333; margin-bottom: 10px;">Total Destinations</h3>
+                            <div style="font-size: 2rem; font-weight: bold; color: #28a745;">${totalDestinations}</div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 style="color: #333; margin-bottom: 10px;">Total Itineraries</h3>
+                            <div style="font-size: 2rem; font-weight: bold; color: #ffc107;">${totalItineraries}</div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 style="color: #333; margin-bottom: 10px;">Total Reviews</h3>
+                            <div style="font-size: 2rem; font-weight: bold; color: #dc3545;">${totalReviews}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3 style="color: #333; margin-bottom: 15px;">Itinerary Status</h3>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                                <div style="margin-bottom: 10px;">
+                                    <span style="color: #28a745;">✅ Approved:</span> ${approvedItineraries}
+                                </div>
+                                <div style="margin-bottom: 10px;">
+                                    <span style="color: #ffc107;">⏳ Pending:</span> ${pendingItineraries}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: #333; margin-bottom: 15px;">Popular Destinations</h3>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                                ${popularDestinations.length > 0 ? 
+                                    popularDestinations.map(([dest, count]) => `
+                                        <div style="margin-bottom: 8px;">
+                                            <span style="font-weight: bold;">${dest}:</span> ${count} saves
+                                        </div>
+                                    `).join('') :
+                                    '<div style="color: #666;">No data available yet</div>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">User Growth</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <p style="color: #666;">User registration trend: ${totalUsers > 0 ? 'Growing' : 'No users yet'}</p>
+                            <p style="color: #666;">Average reviews per user: ${totalUsers > 0 ? (totalReviews / totalUsers).toFixed(1) : '0'}</p>
+                            <p style="color: #666;">Average itineraries per user: ${totalUsers > 0 ? (totalItineraries / totalUsers).toFixed(1) : '0'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function closeAnalyticsModal() {
+            const modal = document.getElementById('analyticsModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function manageUsers() {
+            switchTab('users');
+        }
+        
+        function systemSettings() {
+            const modal = document.createElement('div');
+            modal.id = 'settingsModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">System Settings</h2>
+                        <button onclick="closeSettingsModal()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">Site Configuration</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Site Name</label>
+                                <input type="text" id="siteName" value="A Journey 4 Life" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Site Description</label>
+                                <textarea id="siteDescription" rows="3" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">Plan your perfect Philippine adventure with our comprehensive travel guide</textarea>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Max Itineraries per User</label>
+                                <input type="number" id="maxItineraries" value="10" min="1" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">Email Settings</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">SMTP Server</label>
+                                <input type="text" id="smtpServer" value="smtp.gmail.com" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">SMTP Port</label>
+                                <input type="number" id="smtpPort" value="587" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">From Email</label>
+                                <input type="email" id="fromEmail" value="noreply@journey4life.com" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">Security Options</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="requireEmailVerification" checked>
+                                    <span>Require email verification for new users</span>
+                                </label>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="autoApproveItineraries" checked>
+                                    <span>Auto-approve itineraries</span>
+                                </label>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="enableReviews" checked>
+                                    <span>Enable user reviews</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #333; margin-bottom: 15px;">Backup Settings</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Backup Frequency</label>
+                                <select id="backupFrequency" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly" selected>Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Backup Location</label>
+                                <input type="text" id="backupLocation" value="/backups/" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <button onclick="createBackup()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Create Backup Now</button>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button onclick="closeSettingsModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+                        <button onclick="saveSettings()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Save Settings</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function saveSettings() {
+            const settings = {
+                siteName: document.getElementById('siteName').value,
+                siteDescription: document.getElementById('siteDescription').value,
+                maxItineraries: parseInt(document.getElementById('maxItineraries').value),
+                smtpServer: document.getElementById('smtpServer').value,
+                smtpPort: parseInt(document.getElementById('smtpPort').value),
+                fromEmail: document.getElementById('fromEmail').value,
+                requireEmailVerification: document.getElementById('requireEmailVerification').checked,
+                autoApproveItineraries: document.getElementById('autoApproveItineraries').checked,
+                enableReviews: document.getElementById('enableReviews').checked,
+                backupFrequency: document.getElementById('backupFrequency').value,
+                backupLocation: document.getElementById('backupLocation').value
+            };
+            
+            localStorage.setItem('systemSettings', JSON.stringify(settings));
+            alert('Settings saved successfully!');
+            closeSettingsModal();
+        }
+        
+        function createBackup() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const destinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            const itineraries = JSON.parse(localStorage.getItem('savedItineraries') || '[]');
+            const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+            const savedDestinations = JSON.parse(localStorage.getItem('savedDestinations') || '[]');
+            
+            const backup = {
+                timestamp: new Date().toISOString(),
+                users: users,
+                destinations: destinations,
+                itineraries: itineraries,
+                reviews: reviews,
+                savedDestinations: savedDestinations
+            };
+            
+            const backups = JSON.parse(localStorage.getItem('backups') || '[]');
+            backups.push(backup);
+            localStorage.setItem('backups', JSON.stringify(backups));
+            
+            alert('Backup created successfully!');
+        }
+        
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout from admin panel?')) {
+                localStorage.removeItem('admin');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Notifications System
+        let notificationsVisible = false;
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            notificationsVisible = !notificationsVisible;
+            dropdown.style.display = notificationsVisible ? 'block' : 'none';
+            
+            if (notificationsVisible) {
+                loadNotifications();
+            }
+        }
+
+        function loadNotifications() {
+            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+            const notificationList = document.getElementById('notificationList');
+            const notificationCount = document.getElementById('notificationCount');
+            
+            // Count unread notifications
+            const unreadCount = notifications.filter(n => !n.read).length;
+            if (unreadCount > 0) {
+                notificationCount.style.display = 'block';
+                notificationCount.textContent = unreadCount;
+            } else {
+                notificationCount.style.display = 'none';
+            }
+            
+            // Sort notifications by timestamp, newest first
+            notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            notificationList.innerHTML = notifications.length > 0 ? '' : '<div style="padding: 15px; text-align: center; color: #666;">No notifications</div>';
+            
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.style.cssText = `
+                    padding: 10px 15px;
+                    border-bottom: 1px solid #eee;
+                    cursor: pointer;
+                    ${notification.read ? 'opacity: 0.7;' : 'background: #f8f9fa;'}
+                    transition: background 0.3s;
+                `;
+                
+                notificationItem.innerHTML = `
+                    <div style="font-weight: ${notification.read ? 'normal' : 'bold'}; margin-bottom: 5px;">${notification.title}</div>
+                    <div style="font-size: 0.9rem; color: #666;">${notification.message}</div>
+                    <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">
+                        ${new Date(notification.timestamp).toLocaleString()}
+                    </div>
+                `;
+                
+                notificationItem.onclick = () => handleNotificationClick(notification);
+                
+                notificationList.appendChild(notificationItem);
+            });
+        }
+
+        function handleNotificationClick(notification) {
+            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+            const index = notifications.findIndex(n => n.id === notification.id);
+            
+            if (index !== -1) {
+                notifications[index].read = true;
+                localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+                
+                // If it's a contact message notification, show the message
+                if (notification.type === 'contact') {
+                    showContactMessage(notification.id);
+                }
+                
+                loadNotifications();
+            }
+        }
+
+        function showContactMessage(messageId) {
+            const contactMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+            const message = contactMessages.find(m => m.id === messageId);
+            
+            if (!message) {
+                showNotification('Error', 'Message not found!', 'error');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'contactMessageModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: #333; margin: 0;">Contact Message</h2>
+                        <button onclick="this.closest('#contactMessageModal').remove()" style="background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 18px;">×</button>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <div style="margin-bottom: 10px;">
+                            <strong>From:</strong> ${message.name} (${message.email})
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>Subject:</strong> ${message.subject}
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>Received:</strong> ${new Date(message.timestamp).toLocaleString()}
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <strong>Message:</strong><br>
+                            <div style="white-space: pre-wrap; margin-top: 10px;">
+                                ${message.message}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button onclick="this.closest('#contactMessageModal').remove()" class="btn btn-secondary">Close</button>
+                        <a href="mailto:${message.email}" class="btn btn-primary">Reply by Email</a>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function markAllAsRead() {
+            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+            notifications.forEach(notification => {
+                notification.read = true;
+            });
+            localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+            loadNotifications();
+        }
+
+        // Click outside to close notifications
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificationDropdown');
+            const bell = document.querySelector('.notification-bell');
+            
+            if (notificationsVisible && 
+                !dropdown.contains(event.target) && 
+                !bell.contains(event.target)) {
+                notificationsVisible = false;
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Update notifications every minute
+        setInterval(loadNotifications, 60000);
+
+        // Clear any sample data and load real data
+        function clearSampleData() {
+            // Clear any old sample data that might be cached
+            const oldDestinations = JSON.parse(localStorage.getItem('destinations') || '[]');
+            if (oldDestinations.length > 0 && oldDestinations[0].name === 'Boracay Island') {
+                localStorage.removeItem('destinations');
+            }
+        }
+        
+        // Load data on page load
+        clearSampleData();
+        loadAdminData();
+        loadNotifications(); // Load notifications on page load
+    </script>
+</body>
+</html>

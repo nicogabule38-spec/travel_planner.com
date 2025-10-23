@@ -1,0 +1,18 @@
+# Ensure the service worker and other static assets are served correctly
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Serve existing files directly
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # Otherwise redirect to index.html (SPA fallback)
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Recommended headers for PWAs
+<IfModule mod_headers.c>
+  Header set Service-Worker-Allowed "/"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>

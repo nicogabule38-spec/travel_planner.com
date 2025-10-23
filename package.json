@@ -1,0 +1,22 @@
+{
+  "name": "journey4life-electron",
+  "version": "1.0.0",
+  "description": "Electron wrapper for A Journey 4 Life website",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "server": "node server.js",
+    "init-db": "node db/init.js",
+    "pack": "electron-packager . Journey4Life --platform=win32 --arch=x64 --out=dist --overwrite"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-session": "^2.0.0",
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "electron": "^26.2.0",
+    "electron-packager": "^17.1.0"
+  }
+}

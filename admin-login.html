@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - A Journey 4 Life</title>
+    <link rel="stylesheet" href="css/hover-animations.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            min-height: 600px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .auth-right {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .auth-left h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .auth-left p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .auth-left .features {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .auth-left .features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .auth-right h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .admin-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+        
+        .form-group input:focus {
+            border-color: #e74c3c;
+        }
+        
+        .form-group input.error {
+            border-color: #e74c3c;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .btn {
+            width: 100%;
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .btn:hover {
+            background: #c0392b;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-links a {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-home:hover {
+            text-decoration: underline;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #e74c3c;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                flex-direction: column;
+                margin: 20px;
+            }
+            
+            .auth-left {
+                padding: 40px 20px;
+            }
+            
+            .auth-right {
+                padding: 40px 20px;
+            }
+            
+            .back-home {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 20px;
+                color: #e74c3c;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-home">← Back to Home</a>
+    
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-left">
+                <h1>Admin Portal</h1>
+                <p>Access the administrative dashboard for A Journey 4 Life</p>
+                <ul class="features">
+                    <li>✓ Manage user accounts</li>
+                    <li>✓ Add/edit destinations</li>
+                    <li>✓ Approve itineraries</li>
+                    <li>✓ View analytics & reports</li>
+                    <li>✓ System configuration</li>
+                </ul>
+            </div>
+            
+            <div class="auth-right">
+                <div class="admin-badge">ADMIN ACCESS</div>
+                <h2>Admin Sign In</h2>
+                
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="email">Admin Email</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError">Please enter a valid admin email</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error-message" id="passwordError">Password is required</div>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="loginBtn">Sign In as Admin</button>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Verifying admin credentials...</p>
+                    </div>
+                </form>
+                
+                <div class="auth-links">
+                    <p><a href="login.html">Regular User Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Admin credentials
+        const ADMIN_EMAIL = 'admin@journey4life.com';
+        const ADMIN_PASSWORD = 'admin123';
+        
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            
+            // Reset errors
+            email.classList.remove('error');
+            password.classList.remove('error');
+            emailError.style.display = 'none';
+            passwordError.style.display = 'none';
+            
+            // Email validation
+            if (!email.value || !email.value.includes('@')) {
+                email.classList.add('error');
+                emailError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Password validation
+            if (!password.value || password.value.length < 6) {
+                password.classList.add('error');
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Admin login form submission
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Show loading
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            
+            // Try server admin login first (Express API), fallback to local check
+            (async () => {
+                try {
+                    const resp = await fetch('/api/auth/admin_login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+                    const result = await resp.json();
+                    if (result.success) {
+                        localStorage.setItem('admin', JSON.stringify({ email, role: 'admin', loginTime: new Date().toISOString() }));
+                        window.location.href = 'admin-dashboard.html';
+                        return;
+                    }
+                } catch (err) {
+                    // server unreachable, continue to fallback
+                }
+
+                // Fallback local check (useful in offline Electron mode)
+                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                    localStorage.setItem('admin', JSON.stringify({ email, role: 'admin', loginTime: new Date().toISOString() }));
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    document.getElementById('loginBtn').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                    alert('Invalid admin credentials. Please try again.');
+                }
+            })();
+        });
+        
+        // Real-time validation
+        document.getElementById('email').addEventListener('blur', function() {
+            if (this.value && !this.value.includes('@')) {
+                this.classList.add('error');
+                document.getElementById('emailError').style.display = 'block';
+            } else {
+                this.classList.remove('error');
+                document.getElementById('emailError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('password').addEventListener('blur', function() {
+            if (this.value && this.value.length < 6) {
+                this.classList.add('error');
+                document.getElementById('passwordError').style.display = 'block';
+            } else {
+                this.classList.remove('error');
+                document.getElementById('passwordError').style.display = 'none';
+            }
+        });
+        
+        // Check if already logged in as admin
+        if (localStorage.getItem('admin')) {
+            window.location.href = 'admin-dashboard.html';
+        }
+    </script>
+</body>
+</html>

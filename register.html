@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - A Journey 4 Life</title>
+    <link rel="stylesheet" href="css/hover-animations.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            min-height: 700px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .auth-left {
+            flex: 1;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .auth-right {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .auth-left h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .auth-left p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .auth-left .features {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .auth-left .features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .auth-right h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            outline: none;
+        }
+        
+        .form-group input:focus {
+            border-color: #667eea;
+        }
+        
+        .form-group input.error {
+            border-color: #e74c3c;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .auth-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-home:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .strength-weak { color: #e74c3c; }
+        .strength-medium { color: #f39c12; }
+        .strength-strong { color: #27ae60; }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                flex-direction: column;
+                margin: 20px;
+            }
+            
+            .auth-left {
+                padding: 40px 20px;
+            }
+            
+            .auth-right {
+                padding: 40px 20px;
+            }
+            
+            .back-home {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 20px;
+                color: #667eea;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-home">← Back to Home</a>
+    
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-left">
+                <h1>Join Our Community!</h1>
+                <p>Create your account and start planning amazing Philippine adventures</p>
+                <ul class="features">
+                    <li>✓ Save your favorite destinations</li>
+                    <li>✓ Create custom itineraries</li>
+                    <li>✓ Share travel experiences</li>
+                    <li>✓ Get exclusive travel tips</li>
+                </ul>
+            </div>
+            
+            <div class="auth-right">
+                <h2>Create Account</h2>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                        <div class="error-message" id="nameError">Please enter your full name</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError">Please enter a valid email address</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+                        <div class="password-strength" id="passwordStrength"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="City, Country">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="travelStyle">Travel Style</label>
+                        <select id="travelStyle" name="travelStyle" class="form-control">
+                            <option value="Adventure">Adventure</option>
+                            <option value="Relaxation">Relaxation</option>
+                            <option value="Cultural">Cultural</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Budget">Budget</option>
+                            <option value="Luxury">Luxury</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="favDestinations">Favorite Destinations</label>
+                        <input type="text" id="favDestinations" name="favDestinations" placeholder="e.g., Boracay, Palawan, Cebu">
+                    </div>
+                    
+                    <button type="submit" class="btn" id="registerBtn">Create Account</button>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Creating your account...</p>
+                    </div>
+                </form>
+                
+                <div class="auth-links">
+                    <p>Already have an account? <a href="login.html">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is already logged in
+        if (localStorage.getItem('user')) {
+            window.location.href = 'dashboard.html';
+        }
+        
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let message = '';
+            
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            if (strength < 2) {
+                message = 'Weak password';
+                return { strength: 'weak', message: message };
+            } else if (strength < 4) {
+                message = 'Medium password';
+                return { strength: 'medium', message: message };
+            } else {
+                message = 'Strong password';
+                return { strength: 'strong', message: message };
+            }
+        }
+        
+        // Update password strength indicator
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length > 0) {
+                const result = checkPasswordStrength(password);
+                strengthDiv.textContent = result.message;
+                strengthDiv.className = `password-strength strength-${result.strength}`;
+            } else {
+                strengthDiv.textContent = '';
+            }
+        });
+        
+        // Form validation
+        function validateForm() {
+            let isValid = true;
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            // Reset errors
+            [name, email, password, confirmPassword].forEach(field => {
+                field.classList.remove('error');
+            });
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+            
+            // Name validation
+            if (!name.value.trim()) {
+                name.classList.add('error');
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Email validation
+            if (!email.value || !email.value.includes('@')) {
+                email.classList.add('error');
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Password validation
+            if (!password.value || password.value.length < 6) {
+                password.classList.add('error');
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Confirm password validation
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.classList.add('error');
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Registration form submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Show loading
+            document.getElementById('registerBtn').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            
+            (async () => {
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const existingUser = users.find(u => u.email === email);
+
+                if (existingUser) {
+                    // Show error
+                    document.getElementById('registerBtn').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                    alert('An account with this email already exists. Please use a different email or try logging in.');
+                    return;
+                }
+
+                // Try to register on server-side first
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'register');
+                    formData.append('name', name);
+                    formData.append('email', email);
+                    formData.append('password', password);
+                    // Optional fields sent as part of comment or metadata; API currently expects name/email/password
+
+                    const resp = await fetch('api/auth.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await resp.json();
+
+                    if (result.success) {
+                        // Server created user. Persist a local copy as well for app behavior.
+                        const newUser = {
+                            id: result.data && result.data.user_id ? result.data.user_id : Date.now(),
+                            name: name,
+                            email: email,
+                            password: password,
+                            createdAt: new Date().toISOString(),
+                            location: document.getElementById('location').value || 'Not Set',
+                            travelStyle: document.getElementById('travelStyle').value,
+                            favDestinations: document.getElementById('favDestinations').value || 'Not Set',
+                            memberSince: new Date().toLocaleDateString()
+                        };
+
+                        users.push(newUser);
+                        localStorage.setItem('users', JSON.stringify(users));
+
+                        // Redirect to login with success message
+                        window.location.href = 'login.html?registered=true';
+                        return;
+                    } else {
+                        // If server says email already registered, inform user and redirect to login
+                        if (result.message && result.message.toLowerCase().includes('already')) {
+                            alert('Account already exists on server. Please sign in.');
+                            window.location.href = 'login.html?registered=true';
+                            return;
+                        }
+                        // Otherwise, log and fall back to local storage registration
+                        console.warn('Server registration failed:', result.message);
+                    }
+                } catch (err) {
+                    console.warn('Server registration error, falling back to localStorage:', err.message || err);
+                }
+
+                // Fallback: create local user if server registration failed/unavailable
+                const newUser = {
+                    id: Date.now(),
+                    name: name,
+                    email: email,
+                    password: password,
+                    createdAt: new Date().toISOString(),
+                    location: document.getElementById('location').value || 'Not Set',
+                    travelStyle: document.getElementById('travelStyle').value,
+                    favDestinations: document.getElementById('favDestinations').value || 'Not Set',
+                    memberSince: new Date().toLocaleDateString()
+                };
+
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+
+                // Redirect to login with success message
+                window.location.href = 'login.html?registered=true';
+            })();
+        });
+        
+        // Real-time validation
+        document.getElementById('name').addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('error');
+                document.getElementById('nameError').style.display = 'block';
+            } else {
+                this.classList.remove('error');
+                document.getElementById('nameError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('email').addEventListener('blur', function() {
+            if (this.value && !this.value.includes('@')) {
+                this.classList.add('error');
+                document.getElementById('emailError').style.display = 'block';
+            } else {
+                this.classList.remove('error');
+                document.getElementById('emailError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!validateForm()) return;
+
+            document.getElementById('registerBtn').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const location = document.getElementById('location').value.trim();
+            const travelStyle = document.getElementById('travelStyle').value;
+            const favDestinations = document.getElementById('favDestinations').value.split(',').map(s => s.trim()).filter(Boolean);
+
+            // Save to localStorage (offline first)
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                password,
+                location,
+                travelStyle,
+                favDestinations,
+                memberSince: new Date().toLocaleDateString()
+            };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Try to register on server (Express API), fallback to legacy PHP endpoint
+            (async () => {
+                try {
+                    const resp = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, password })
+                    });
+                    const result = await resp.json();
+                    if (!result.success) console.warn('Server register warning:', result.message);
+                } catch (err) {
+                    // Fallback to legacy PHP endpoint if available
+                    try {
+                        const formData = new FormData();
+                        formData.append('action', 'register');
+                        formData.append('name', name);
+                        formData.append('email', email);
+                        formData.append('password', password);
+                        await fetch('api/auth.php', { method: 'POST', body: formData });
+                    } catch (err2) {
+                        console.warn('Server registration failed (offline or server error)');
+                    }
+                }
+
+                // Redirect to login with success flag
+                window.location.href = 'login.html?registered=true';
+            })();
+        });
